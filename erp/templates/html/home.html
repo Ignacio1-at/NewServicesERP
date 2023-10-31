@@ -1,0 +1,129 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maritime Services</title>
+    <!-- Agrega tus enlaces a archivos CSS y JS aquí -->
+    <link rel="stylesheet" href="{% static 'css/stylesHome.css' %}">
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <span class="navTrigger">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+            <div class="logo">
+                <a href="#">
+                    <img id="logo-img" src="{% static 'images/logopng.png' %}" alt="Logo">
+                </a>
+            </div>
+            <div id="mainListDiv" class="main_list">
+                <ul class="navlinks">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#contacto" onclick="scrollToContact()">Contacto</a></li>
+                    <li><a href="{% url 'erp:login' %}">Iniciar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="home">
+		<div class="BienvenidoAMaritimeServices">
+			<span>BIENVENIDO A</span>
+			<span>MARITIME SERVICES</span>
+		</div>
+	</section>
+	
+    <div class="wrapper">
+        <h2 class="myH2">Nuestra Empresa</h2>
+        <p class="myP">
+            Somos una empresa dinámica, enfocada en ofrecer servicios de mantenimiento rápido y conveniente para buques de carga a granel.
+            Contamos con el equipo necesario y especializado para trabajar en puerto y durante navegación, personal calificado y con la capacidad de moverse rápidamente en todo el país.
+        </p>
+        <p class="myP">
+            Podemos obtener altos estándares requeridos para cada tipo de carga; nuestro compromiso es preparar el buque lo más rápido posible con un alto estándar para su próximo empleo. Para lograrlo, contamos con personal para trabajar 24 horas al día, 7 días a la semana, en el puerto o en navegación.
+        </p>
+        <div class="grid-container">
+            <div class="grid-item">
+                <h2 class="myH3">Nuestro Compromiso</h2>
+                <p class="myP1">
+                    En Maritime Services SpA estamos comprometidos con la alta calidad, seguridad y brindar el mejor servicio asegurando a nuestros clientes:
+                    Personal calificado, alto estándar de seguridad, alto estándar de calidad en el menor tiempo posible y evaluación constante para mejora en nuestros procesos.
+                </p>
+            </div>
+            <div class="grid-item">
+                <h2 class="myH3">Nuestra Visión</h2>
+                <p class="myP1">
+                    Consolidar nuestra cultura empresarial, liderando nuevas tecnologías y procesos organizacionales de manera recursiva y eficiente, a través de los cuales se asegure el buen desempeño y reconocimiento empresarial, requeridos para ubicarnos entre las 3 primeras empresas de servicios marítimos en Sudamérica.
+                </p>
+            </div>
+            <div class="grid-item">
+                <h2 class="myH3">Nuestra Misión</h2>
+                <p class="myP1">
+                    Empresa de servicios de limpieza de buques de carga; visionaria, innovadora y orientada al cliente, cuyos pilares fundamentales de nuestra estructura empresarial son la calidad de nuestros servicios, la protección del medio ambiente y el desarrollo personal y profesional de nuestros colaboradores. Todo cimentado en sólidos principios éticos y morales que aseguran nuestro desempeño armónico.
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <footer id="contacto" class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="column-content">
+                    <section id="media_image-3" class="fusion-footer-widget-column widget widget_media_image"><img width="400" height="135" src="https://www.maritimeservices.cl/wp-content/uploads/2019/08/MS2.jpg" class="image wp-image-1129  attachment-full size-full" alt="" style="max-width: 100%; height: auto; box-shadow: 0px 15px 25px rgba(2, 99, 54, 0.5);" srcset="https://www.maritimeservices.cl/wp-content/uploads/2019/08/MS2-200x77.jpg 200w, https://www.maritimeservices.cl/wp-content/uploads/2019/08/MS2-300x116.jpg 300w, https://www.maritimeservices.cl/wp-content/uploads/2019/08/MS2.jpg 350w" sizes="(max-width: 350px) 100vw, 350px"><div style="clear:both;"></div></section>
+                </div>
+            </div>
+            <div class="footer-column">
+                <div class="column-content">
+                    <h4 class="footer-heading" data-fontsize="19" data-lineheight="28">Contáctanos / Contact Us</h4>
+                    <div class="textwidget">
+                        <div class="text_font">Phone: +56 9 9070 4830</div>
+                        <div class="text_font">E-mail: acisternas@maritimeservices.cl</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-column">
+                <div class="column-content">
+                    <h4 class="footer-heading" data-fontsize="19" data-lineheight="28">Oficina / Office</h4>
+                    <div class="textwidget">
+                        <div class="text_font">Bandera 833, of 211</div>
+                        <div class="text_font">Santiago</div>
+                        <div class="text_font">
+                            Región Metropolitana</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Maritime Services SpA. Los derechos reservados por KodeThree.</p>
+        </div>
+    </footer>
+
+    <!-- Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="{% static 'js/scriptHome.js' %}"></script>
+
+    <!-- Funcion usado para deslizamiento suave al contacto -->
+    <script>
+        function scrollToContact() {
+            const footer = document.getElementById("contacto");
+            footer.scrollIntoView({ behavior: "smooth" });
+        }
+    </script>
+
+    <!-- Funcion que se activa cuando ocurre un desplazamiento en la ventana del navegador. -->
+    <script>
+        $(window).scroll(function() {
+            if ($(document).scrollTop() > 50) {
+                $('.nav').addClass('affix');
+                console.log("OK");
+            } else {
+                $('.nav').removeClass('affix');
+            }
+        });
+    </script>
+</body>
+</html>

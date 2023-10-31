@@ -1,0 +1,21 @@
+{% csrf_token %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Menu</title>
+  <link rel="stylesheet" href="{% static 'css/stylesMenu.css' %}">
+    <style>
+        html {
+            background-image: url("{% static 'images/Fondo.jpg' %}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Estoy en el Menú</h1>
+</body>
+</html>
