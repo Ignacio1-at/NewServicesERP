@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Inicio Sesion</title>
+    <title>Inicio Sesión</title>
     <link rel="stylesheet" href="{% static 'css/stylesLogin.css' %}">
     <style>
         html {
-            background-image: url("{% static 'images/fondo.jpg' %}");
+            background-image: url("{% static 'images/Fondonew.png' %}");
             background-repeat: no-repeat;
             background-size: cover;
             background-attachment: fixed;
@@ -18,8 +18,18 @@
     <button onclick="goBack()" class="back-button">Volver</button>
     <div class="login-wrapper">
         <form id="login-form" class="form" method="post" action="{% url 'erp:login' %}">
+            <div class="logo">
+                <img src="{% static 'images/logopng.png' %}" height="150">
+            </div>
             {% csrf_token %}
             <h2>Inicio de Sesión</h2>
+            {% if messages %}
+                <ul class="errorlist">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <div class="input-group">
                 <input type="text" name="email" id="loginUser" required>
                 <label for="loginUser">E-mail</label>
@@ -31,21 +41,15 @@
             <input type="submit" value="Acceder" class="submit-button">
             <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
         </form>
-        <script src="{% static 'js/scriptLogin.js' %}"></script>  
-        
-        <!-- Script para mostrar una alerta en caso de error -->
-        <script>
-            {% if error %}
-                alert("El correo electrónico o la contraseña son incorrectos.");
-            {% endif %}
-        </script>
     </div>
     
-    <!--Retroceder-->
+    <!-- Retroceder -->
     <script>
         function goBack() {
             history.back();
         }
     </script>
+
+    <script src="{% static 'js/scriptLogin.js' %}"></script>
 </body>
 </html>

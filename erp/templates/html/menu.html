@@ -1,21 +1,111 @@
-{% csrf_token %}
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Menu</title>
-  <link rel="stylesheet" href="{% static 'css/stylesMenu.css' %}">
-    <style>
-        html {
-            background-image: url("{% static 'images/Fondo.jpg' %}");
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-attachment: fixed;
-        }
-    </style>
-</head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Menu</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesMenu.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <body>
-    <h1>Estoy en el Menú</h1>
+    <div class="fondo">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-blue">
+            <div class="container">
+                <a class="navbar-brand mr-auto" href="#">
+                    <img src="{% static 'images/logopng.png' %}" alt="" width="100" height="100">
+                </a>
+                <!-- Example single danger button -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-personalizado dropdown-toggle text_white" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- CAMBIAR PARA QUE SE LEA DESDE LA BASE DE DATOS -->
+                        {{ nombre_usuario }}
+                    </button>                    
+                    
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Ver perfil</a></li>                 
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'erp:logout' %}">Cerrar sesión</a></li>
+                    </ul>
+                </div>                
+            </div>               
+        </nav>
+        
+        <div class="container Set_Botones px-4 d-flex justify-content-center align-items-center">
+            <div class="row gx-5">
+                <div class="col-md-6 col-lg-6">
+                    <div class="p-3 Operaciones">
+                        <!-- Configura el botón para redireccionar a gestorOperaciones -->
+                        <a href="{% url 'erp:gestor-operaciones' %}" class="btn btn-operaciones d-flex flex-column align-items-center w-100">
+                            <img src="{% static 'images/Operaciones.png' %}" alt="Texto alternativo de la imagen" class="mb-2">
+                            <span class="texto-blanco" style="color: white;">Operaciones</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <style>
+                        /* Estilo para los botones con ancho y altura fijos */
+                        .Botones button {
+                            width: 200px; /* Ancho aumentado para hacerlos más cuadrados */
+                            height: 200px; /* Altura deseada */
+                            margin-right: 35px; /* Margen derecho para separar los botones */
+                            margin-bottom: -20px; /* Margen inferior para separar los botones de la parte superior */
+                          }
+                        
+                    </style>
+                    
+                    <div class="container Mantenimiento-Informe px-4 d-flex justify-content-center align-items-center">
+                        <div class="row gy-5">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="p-3 Botones">
+                                    <button class="BotonMantenimiento" onclick="accionBoton()">
+                                        <img src="{% static 'images/Mantenimiento.png' %}" alt="Texto alternativo de la imagen">
+                                        <br>
+                                        Mantenimiento
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="p-3 Botones">
+                                    <button class="BotonOtro" onclick="accionBoton()">
+                                        <img src="{% static 'images/Informe.png' %}" alt="Texto alternativo de la imagen">
+                                        <br>
+                                        Informe
+                                    </button>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    
+                    <div class="container RRHH_SEGURIDAD px-4 d-flex justify-content-center align-items-center">
+                        <div class="row gy-5">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="p-3 Botones">
+                                    <button class="BotonOtro" onclick="accionBoton()">
+                                        <img src="{% static 'images/Seguridad.png' %}" alt="Texto alternativo de la imagen">
+                                        <br>
+                                        Seguridad
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="p-3 Botones">
+                                    <button class="BotonOtro" onclick="accionBoton()">
+                                        <img src="{% static 'images/RRHH.png' %}" alt="Texto alternativo de la imagen">
+                                        <br>
+                                        Recursos humanos
+                                    </button>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>      
+            </div>
+        </div>  
+    </div>  
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    <!-- Agrega la referencia al archivo JavaScript -->
+    <script src="{% static 'js/scriptMenu.js' %}"></script>
 </body>
 </html>

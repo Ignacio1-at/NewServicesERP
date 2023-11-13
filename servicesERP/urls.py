@@ -1,8 +1,6 @@
-# servicesERP/urls.py
-
 from django.urls import path, include
-from erp.views import home, menu_view, procesar_formulario, login_view
 from django.contrib import admin
+from erp.views import home, login_view, menu_view, procesar_formulario
 
 urlpatterns = [
     path('admin/', admin.site.urls),

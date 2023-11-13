@@ -18,6 +18,15 @@ body{
     align-items: center;
 }
 
+.logo {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 160px;
+}
+
 .form{
     position: relative;
     width: 100%;
@@ -99,7 +108,7 @@ body{
     margin-bottom: 10px;
     border: none;
     outline: none;
-    background-color: #ff0000;
+    background-color: #ff0000a8;
     color: #fff;
     font-family: "B612";
 	font-weight: bold;
@@ -135,4 +144,23 @@ body{
     padding: 10px 20px;
     border-radius: 5px;
     box-shadow: 0px 15px 25px rgba(0,0,0,0.5);
+}
+
+/* Agrega un estilo amarillo para los mensajes de error */
+.errorlist {
+    padding: 30px;
+    margin-bottom: 10px;
+    color: red; /* Cambia el color del texto de error a rojo o el color que prefieras */
+}
+
+/* Estilo para cada mensaje de error en la lista */
+.errorlist li {
+    list-style-type: none;
+    margin-left: -40px; /* Alinea los mensajes a la izquierda */
+    padding: 5px;
+}
+
+/* Estilo para el texto de cada mensaje de error */
+.errorlist li::before {
+    content: "• "; /* Agrega viñetas a cada mensaje */
 }
