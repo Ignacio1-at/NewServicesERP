@@ -1,0 +1,61 @@
+body {
+    background-image: url(../images/Fondonew.png); /* Reemplaza 'nombre_de_la_imagen.jpg' con la ruta de tu imagen de fondo */
+    background-size: cover; /* Establece la altura del contenedor al 100% de la altura de la ventana (viewport height) */
+    background-repeat: repeat; /* Evita que la imagen se repita */
+    font-family: Arial, sans-serif;
+    background-color: black; /* Cambia el color de fondo del cuerpo a negro */
+    color: white; /* Cambia el color del texto a blanco */
+    padding: 20px; /* Añade espacio en los bordes del cuerpo */
+}
+.section {
+    margin: 20px 0;
+}
+
+.textbox {
+    width: 300px; /* Ancho reducido para los campos de texto */
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px; /* Establece un radio de borde para que sea circular */
+    background-color: #01152a; /* Color de fondo azul */
+    color: white; /* Cambia el color del texto a blanco */
+    
+}
+.date-input {
+    width: 150px; /* Ancho reducido para el campo de fecha de nacimiento */
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px; /* Establece un radio de borde para que sea circular */
+    background-color: #01152a; /* Color de fondo azul */
+    color: white; /* Cambia el color del texto a blanco */
+}
+/* Estilos para la imagen principal */
+.imagen-container {
+    text-align: center; /* Alinea la imagen al centro del contenedor */
+    margin: 20px 0; /* Establece un margen superior e inferior de 20px */
+    position: relative; /* Permite el posicionamiento absoluto de la imagen */
+    max-width: 40%; /* Para que el contenedor sea responsivo */
+}
+
+.imagen-container img {
+    width: 100%; /* Para que la imagen ocupe todo el contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen */
+    display: block; /* Elimina el espacio en blanco debajo de la imagen */
+}
+
+#GuardarFicha {
+    background-color: #01152a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#GuardarFicha {
+    background-color: #01152a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

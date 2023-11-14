@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Navíos</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesNavio.css' %}">
+    <style>
+        /* Estilos CSS para dar formato a la página */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .section {
+            margin: 20px 0;
+        }
+        .textbox {
+            width: 300px;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 10px;
+            background-color: #01152a;
+            color: white;
+        }
+        .date-input {
+            width: 150px;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 10px;
+            background-color: #01152a;
+            color: white;
+        }
+
+        img {
+            max-width: 200%;
+            height: auto;
+        }
+
+        .form-container {
+            margin-left: 20px;
+            text-align: left;
+        }
+
+        .textbox, .selectbox {
+            margin: 5px;
+        }
+
+        @media only screen and (min-width: 600px) {
+            .textbox, .date-input {
+                width: 300px;
+            }
+        }
+
+        @media only screen and (max-width: 600px) {
+            .textbox, .date-input {
+                width: calc(100% - 10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Ficha de Navíos</h1>
+    <div class="imagen-container">
+        <img src="{% static 'images/lineaRoja.png' %}" alt="Linea Roja">
+    </div>
+
+    <div class="section">
+        <form method="post" id="fichaNavioForm">
+            {% csrf_token %}
+            <input type="text" class="textbox" name="Nave" placeholder="Nave">
+            <input type="text" class="textbox" name="Viaje" placeholder="Viaje">
+            <input type="text" class="textbox" name="Puerto" placeholder="Puerto">
+            <input type="text" class="textbox" name="Carga" placeholder="Carga">
+            <input type="text" class="textbox" name="Procedencia" placeholder="Procedencia">
+            <input type="text" class="textbox" name="TipoServicio" placeholder="Tipo de Servicio">
+            <input type="text" class="textbox" name="Armador" placeholder="Armador">
+            <input type="text" class="textbox" name="Agencia" placeholder="Agencia">
+            <input type="text" class="textbox" name="ProximoPuerto" placeholder="Proximo Puerto">
+
+            <select class="textbox" name="Encalado">
+                <option value="estadoCivil">Encalado</option>
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+            </select>
+
+            <div class="form-container">
+                <label for="ETA">Fecha ETA:</label>
+                <input type="date" class="textbox" name="ETA">
+            
+                <br>
+            
+                <label for="horaRegistroETA">Hora de Registro:</label>
+                <input type="time" class="textbox" name="horaRegistroETA">
+            </div>
+
+            <select class="textbox" name="Bombasumergible">
+                <option value="estadoCivil">Bomba Sumergible</option>
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+            </select>
+
+            <select class="textbox" name="Cubierta">
+                <option value="estadoCivil">Cubierta</option>
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+            </select>
+
+            <select class="textbox" name="ShapeBox">
+                <option value="estadoCivil">Shape Box</option>
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+            </select>
+            
+            <select class="textbox" name="PCR">
+                <option value="PCR">PCR</option>
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+            </select>
+
+            <div class="form-container">
+                <label for="horaRegistroPCR">Hora de PCR:</label>
+                <input type="time" class="textbox" name="horaRegistroPCR">
+            </div>
+
+            <script src="{% static 'js/scriptNavio.js' %}"></script>
+
+            <h1>Navegación</h1>
+            <div class="seccion">
+                <div class="rectangulo">
+                    <label for="cantidadPersonas">Cantidad de Personas:</label>
+                    <input type="number" class="textbox" name="cantidadPersonas">
+                    <span>Personas</span>
+                </div>
+        
+                <div class="rectangulo">
+                    <label for="puerto">Puerto:</label>
+                    <input type="number" class="textbox" name="puerto">
+                    <span>Personas</span>
+                </div>
+            </div>
+        
+            <h3></h3>
+            <button type="submit">Guardar Ficha</button>
+        </form>
+    </div>
+
+<!-- Retroceder -->
+<button type="button" onclick="goBack()">Volver</button>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+<!-- Tu código HTML anterior -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/scriptNavio.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#fichaNavioForm').submit(function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "erp:nueva_ficha" %}',
+                data: $('#fichaNavioForm').serialize() + "&{% csrf_token %}",
+                success: function (data) {
+                    console.log(data);
+
+                    if (data.redirect_url) {
+                        console.log("Redireccionando a:", data.redirect_url);
+                        window.location.href = data.redirect_url;
+                    } else {
+                        console.error("La respuesta no contiene una URL de redirección.");
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+    });
+</script>
+
+<script src="{% static 'js/scriptNavio.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', inicializarScripts);
+</script>
+
+</body>
+</html>

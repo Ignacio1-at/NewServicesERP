@@ -1,0 +1,25 @@
+.fondo {
+  background-image: url(../images/Fondonew.png);
+  min-height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden; /* Esto evita el scroll */
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+  /* stylesBase.css u otro archivo de estilos */
+.bg-blue {
+  background-color: #01152a  !important; /* Puedes ajustar el color según tus necesidades */
+}
+
+/* CSS personalizado para cambiar el color de fondo y el color del texto del botón */
+.btn-personalizado {
+  color: white !important;
+  border:none; /* Cambia el color del texto a blanco */
+}  
