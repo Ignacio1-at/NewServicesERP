@@ -6,6 +6,9 @@ from django.contrib import messages
 from .forms import CustomLoginForm, FichaNavioForm, FichaPersonalForm, HijoFormSet  # <-- Actualiza esta línea
 from .models import FichaNavio, FichaPersonal
 from django.urls import reverse
+import logging
+
+logger = logging.getLogger(__name__)
 #---Excel
 import openpyxl
 from django.http import HttpResponse, JsonResponse
@@ -157,6 +160,7 @@ from django.http import JsonResponse
 @login_required
 def nueva_fichaPersonal(request):
     if request.method == 'POST':
+        logger.debug('Datos recibidos en la vista: %s ', request.POST)
         ficha_form = FichaPersonalForm(request.POST)
         hijos_formset = HijoFormSet(request.POST, prefix='hijos')
 
@@ -170,6 +174,7 @@ def nueva_fichaPersonal(request):
             return JsonResponse({'redirect_url': '/erp/gestor-personal/'})
         else:
             messages.error(request, 'Error en el formulario. Verifica los datos ingresados.')
+            print('Errores del formulario:', ficha_form.errors.as_json())
             return JsonResponse({'error': 'Error en el formulario. Verifica los datos ingresados.'}, status=400)
 
     else:

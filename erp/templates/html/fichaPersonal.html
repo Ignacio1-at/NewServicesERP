@@ -55,6 +55,10 @@
           width: calc(100% - 10px);
         }
       }
+      
+      .error {
+        color: red;
+      }
     </style>
   </head>
   <body>
@@ -66,27 +70,25 @@
     <form method="post" id="fichaPersonalForm">
       {% csrf_token %}
       <div class="section">
-        <input type="text" class="textbox" name="apellidoPaterno" id="apellidoPaterno" placeholder="Apellido Paterno" />
-        <input type="text" class="textbox" name="apellidoMaterno" placeholder="Apellido Materno" />
-        <input type="text" class="textbox" name="nombres" placeholder="Nombres" />
-        <input type="text" class="textbox" name="rut" placeholder="Rut" />
-
+        <input type="text" class="textbox {% if ficha_form.apellidoPaterno.errors %}{% endif %}" name="apellidoPaterno" id="apellidoPaterno" placeholder="Apellido Paterno" />
+        <input type="text" class="textbox {% if ficha_form.apellidoMaterno.errors %}{% endif %}" name="apellidoMaterno" placeholder="Apellido Materno" />
+        <input type="text" class="textbox {% if ficha_form.nombres.errors %}{% endif %}" name="nombres" placeholder="Nombres" />
+        <input type="text" class="textbox {% if ficha_form.rut.errors %}{% endif %}" name="rut" placeholder="Rut" />
         <!-- Selector desplegable para Estado Civil -->
-        <select class="textbox" name="estadoCivil">
+        <select class="textbox {% if ficha_form.estadoCivil.errors %}{% endif %}" name="estadoCivil">
           <option value="">Selecciona Estado Civil</option>
           <option value="Soltero">Soltero</option>
           <option value="Casado">Casado</option>
           <option value="Viudo">Viudo</option>
         </select>
 
-        <input type="text" class="textbox" name="nacionalidad" placeholder="Nacionalidad" />
-        <input type="text" class="textbox" name="direccion" placeholder="Dirección" />
-        <input type="text" class="textbox" name="comuna" placeholder="Comuna" />
-        <input type="text" class="textbox" name="correoElectronico" placeholder="Correo Electrónico" />
-        <input type="text" class="textbox" name="celular" placeholder="Celular" />
-
+        <input type="text" class="textbox {% if ficha_form.nacionalidad.errors %}{% endif %}" name="nacionalidad" placeholder="Nacionalidad" />
+        <input type="text" class="textbox {% if ficha_form.direccion.errors %}{% endif %}" name="direccion" placeholder="Dirección" />
+        <input type="text" class="textbox {% if ficha_form.comuna.errors %}{% endif %}" name="comuna" placeholder="Comuna" />
+        <input type="text" class="textbox {% if ficha_form.correoElectronico.errors %}{% endif %}" name="correoElectronico" placeholder="Correo Electrónico" />
+        <input type="text" class="textbox {% if ficha_form.celular.errors %}{% endif %}" name="celular" placeholder="Celular" />
         <!-- Calendario para Fecha de Nacimiento -->
-        <input type="date" class="textbox" name="fechaNacimiento" />
+        <input type="date" class="textbox {% if ficha_form.fechaNacimiento.errors %}{% endif %}" name="fechaNacimiento" />
       </div>
 
       <div class="section">
@@ -318,12 +320,41 @@
       <button type="button" id="GuardarFicha">Guardar Ficha</button>
     </form>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
       $(document).ready(function () {
         $('#GuardarFicha').on('click', function (event) {
           event.preventDefault()
       
+          // Verificar campos obligatorios
+          if (!validateForm()) {
+            alert('Por favor, completa todos los campos obligatorios.')
+            return
+          }
+      
+          // Resto de la lógica para enviar el formulario al servidor
+          // ...
+      
+          // Validar RUT y fecha de nacimiento
+          var rutValido = validarRut($('#rut').val())
+          var fechaValida = validarFechaNacimiento($('#fechaNacimiento').val())
+      
+          if (!rutValido || !fechaValida) {
+            return
+          }
+      
+          // Validar campos específicos
+          if (!validarCamposEspecificos()) {
+            return
+          }
+      
+          // Validar hijos
+          if (!validarHijos()) {
+            return false
+          }
+      
+          return true
+      
+          // Ejemplo: Enviar formulario usando AJAX
           $.ajax({
             type: 'POST',
             url: '{% url "erp:nueva_fichaPersonal" %}',
@@ -342,9 +373,24 @@
             error: function (xhr, textStatus, errorThrown) {
               console.log('Error en la solicitud:', textStatus)
               console.log('Detalles del error:', xhr.responseText)
+              alert('Hubo un error en el formulario. Verifica los datos ingresados.')
             }
           })
         })
+      
+        function validateForm() {
+          // Verificar campos obligatorios
+          var mandatoryFields = ['apellidoPaterno', 'apellidoMaterno', 'estadoCivil' /* ...otros campos obligatorios... */];
+          for (var i = 0; i < mandatoryFields.length; i++) {
+              var fieldName = mandatoryFields[i];
+              var fieldValue = $('#' + fieldName).val();
+              if (!fieldValue) {
+                  alert('El campo "' + fieldName + '" es obligatorio. Por favor, completa este campo.');
+                  return false;
+              }
+          }
+          return true
+        }
       })
     </script>
   </body>
