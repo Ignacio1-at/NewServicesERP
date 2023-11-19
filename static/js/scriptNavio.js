@@ -1,5 +1,4 @@
 function inicializarScripts() {
-    debugger;
     var horaRegistroPCR = document.getElementById('horaRegistroPCR');
     var horaRegistroETA = document.getElementById('horaRegistroETA');
 
@@ -14,16 +13,16 @@ function inicializarScripts() {
     }
 }
 
-$(document).ready(function () {
-    $('#fichaNavioForm').submit(function (event) {
+jQuery(document).ready(function ($) {
+    jQuery('#fichaNavioForm').submit(function (event) {
         event.preventDefault();
 
         // Utiliza FormData para serializar todos los campos, incluso aquellos vacíos
         var formData = new FormData(this);
 
-        $.ajax({
+        jQuery.ajax({
             type: 'POST',
-            url: nuevaFichaURL,  // Usa la variable definida en el HTML
+            url: nuevaFichaURL,
             data: formData,
             processData: false,
             contentType: false,
@@ -49,4 +48,8 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Llama a la función de inicialización después de que el DOM esté listo
+    inicializarScripts();
 });
+

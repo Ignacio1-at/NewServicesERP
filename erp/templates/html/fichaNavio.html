@@ -11,109 +11,108 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Ficha de Motonaves</h1>
-    <div class="imagen-container">
-        <img src="{% static 'images/lineaRoja.png' %}" alt="Linea Roja">
-    </div>
+  <h1>Ficha de Motonaves</h1>
+  <div class="imagen-container">
+    <img src="{% static 'images/lineaRoja.png' %}" alt="Linea Roja" />
+  </div>
 
-    <div class="section">
-        <form id="fichaNavioForm" method="post" action="{% url 'erp:nueva_ficha' %}">
-            {% csrf_token %}
-            <input type="text" class="textbox" name="Nave" placeholder="Nave">
-            <input type="text" class="textbox" name="Viaje" placeholder="Viaje">
-            <input type="text" class="textbox" name="Puerto" placeholder="Puerto">
-            <input type="text" class="textbox" name="Carga" placeholder="Carga">
-            <input type="text" class="textbox" name="Procedencia" placeholder="Procedencia">
-            <input type="text" class="textbox" name="TipoServicio" placeholder="Tipo de Servicio">
-            <input type="text" class="textbox" name="Armador" placeholder="Armador">
-            <input type="text" class="textbox" name="Agencia" placeholder="Agencia">
-            <input type="text" class="textbox" name="ProximoPuerto" placeholder="Proximo Puerto">
+  <div class="section">
+    <form id="fichaNavioForm" method="post" action="{% url 'erp:nueva_ficha' %}">
+      {% csrf_token %}
+      <input type="text" class="textbox" name="Nave" placeholder="Nave" />
+      <input type="text" class="textbox" name="Viaje" placeholder="Viaje" />
+      <input type="text" class="textbox" name="Puerto" placeholder="Puerto" />
+      <input type="text" class="textbox" name="Carga" placeholder="Carga" />
+      <input type="text" class="textbox" name="Procedencia" placeholder="Procedencia" />
+      <input type="text" class="textbox" name="TipoServicio" placeholder="Tipo de Servicio" />
+      <input type="text" class="textbox" name="Armador" placeholder="Armador" />
+      <input type="text" class="textbox" name="Agencia" placeholder="Agencia" />
+      <input type="text" class="textbox" name="ProximoPuerto" placeholder="Proximo Puerto" />
 
-            <select class="textbox" name="Encalado">
-                <option value="estadoCivil">Encalado</option>
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-            </select>
+      <select class="textbox" name="Encalado">
+        <option value="estadoCivil">Encalado</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
 
-            <div class="form-container">
-                <label for="ETA">Fecha ETA:</label>
-                <input type="date" class="textbox" name="ETA">
-            
-                <br>
-            
-                <label for="horaRegistroETA">Hora de Registro:</label>
-                <input type="time" class="textbox" name="horaRegistroETA">
-            </div>
+      <div class="form-container">
+        <label for="ETA">Fecha ETA:</label>
+        <input type="date" class="textbox" name="ETA" />
 
-            <select class="textbox" name="Bombasumergible">
-                <option value="estadoCivil">Bomba Sumergible</option>
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-            </select>
+        <br />
 
-            <select class="textbox" name="Cubierta">
-                <option value="estadoCivil">Cubierta</option>
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-            </select>
+        <label for="horaRegistroETA">Hora de Registro:</label>
+        <input type="time" class="textbox" name="horaRegistroETA" />
+      </div>
 
-            <select class="textbox" name="ShapeBox">
-                <option value="estadoCivil">Shape Box</option>
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-            </select>
-            
-            <select class="textbox" name="PCR">
-                <option value="PCR">PCR</option>
-                <option value="Si">Si</option>
-                <option value="No">No</option>
-            </select>
+      <select class="textbox" name="Bombasumergible">
+        <option value="estadoCivil">Bomba Sumergible</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
 
-            <div class="form-container">
-                <label for="horaRegistroPCR">Hora de PCR:</label>
-                <input type="time" class="textbox" name="horaRegistroPCR">
-            </div>
+      <select class="textbox" name="Cubierta">
+        <option value="estadoCivil">Cubierta</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
 
-            <script src="{% static 'js/scriptNavio.js' %}"></script>
+      <select class="textbox" name="ShapeBox">
+        <option value="estadoCivil">Shape Box</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
 
-            <h1>Navegación</h1>
-            <div class="seccion">
-                <div class="rectangulo">
-                    <label for="cantidadPersonas">Cantidad de Personas:</label>
-                    <input type="number" class="textbox" name="cantidadPersonas">
-                    <span>Personas</span>
-                </div>
-        
-                <div class="rectangulo">
-                    <label for="puerto">Puerto:</label>
-                    <input type="number" class="textbox" name="puerto">
-                    <span>Personas</span>
-                </div>
-            </div>
-        
-            <h3></h3>
-            <button type="submit">Guardar Ficha</button>
-        </form>
-    </div>
-    <script>
-        // Define la variable con la URL
-        var nuevaFichaURL = '{% url "erp:nueva_ficha" %}';
-    </script>
-    <!-- Retroceder -->
-    <button type="button" onclick="goBack()">Volver</button>
-    <script>
-        function goBack() {
-            window.history.back();
-        }
-    </script>
+      <select class="textbox" name="PCR">
+        <option value="PCR">PCR</option>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
 
+      <div class="form-container">
+        <label for="horaRegistroPCR">Hora de PCR:</label>
+        <input type="time" class="textbox" name="horaRegistroPCR" />
+      </div>
+
+      <script src="{% static 'js/scriptNavio.js' %}"></script>
+
+      <h1>Navegación</h1>
+      <div class="seccion">
+        <div class="rectangulo">
+          <label for="cantidadPersonas">Cantidad de Personas:</label>
+          <input type="number" class="textbox" name="cantidadPersonas" />
+          <span>Personas</span>
+        </div>
+
+        <div class="rectangulo">
+          <label for="puerto">Puerto:</label>
+          <input type="number" class="textbox" name="puerto" />
+          <span>Personas</span>
+        </div>
+      </div>
+
+      <h3></h3>
+      <button type="submit">Guardar Ficha</button>
+    </form>
+  </div>
+  <script>
+    // Define la variable con la URL
+    var nuevaFichaURL = '{% url "erp:nueva_ficha" %}'
+  </script>
+  <!-- Retroceder -->
+  <button type="button" onclick="goBack()">Volver</button>
+  <script>
+    function goBack() {
+      window.history.back()
+    }
+  </script>
 {% endblock %}
 
 {% block module_scripts %}
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="{% static 'js/scriptNavio.js' %}"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', inicializarScripts);
-</script>
+  <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'js/scriptNavio.js' %}"></script>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', inicializarScripts)
+  </script>
 {% endblock %}

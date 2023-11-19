@@ -29,17 +29,19 @@
       <div class="col-md-3" style="width: 25%;">
         <button type="button" class="btn btn-personalizado" onclick="window.location.href='{% url 'erp:nueva_ficha' %}'" style="background-color: #a30000;border-radius: 10px;">+ Nueva Motonave</button>
         <div class="form-check" style="margin-top: 10px;">
-          <input class="form-check-input" type="checkbox" value="" id="terminadoCheckbox" data-estado="Terminado" />
+          <input class="form-check-input estado-checkbox" type="checkbox" value="Terminado" id="terminadoCheckbox" data-estado="Terminado" />
           <label class="form-check-label" for="terminadoCheckbox" style="color: white; background-color: transparent;">Terminado</label>
         </div>
+        <!-- CheckBox-->
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="enProcesoCheckbox" data-estado="En Proceso" />
+          <input class="form-check-input estado-checkbox" type="checkbox" value="En Proceso" id="enProcesoCheckbox" data-estado="En Proceso" />
           <label class="form-check-label" for="enProcesoCheckbox" style="color: white; background-color: transparent;">En Proceso</label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="noIniciadoCheckbox" data-estado="No Iniciado" />
+          <input class="form-check-input estado-checkbox" type="checkbox" value="No Iniciado" id="noIniciadoCheckbox" data-estado="No Iniciado" />
           <label class="form-check-label" for="noIniciadoCheckbox" style="color: white; background-color: transparent;">No Iniciado</label>
         </div>
+
         <a class="btn btn-secondary" href="{% url 'erp:menu' %}" style="margin-top: 5%;">Volver</a>
       </div>
 
@@ -59,19 +61,19 @@
                 </thead>
                 <tbody class="tabla-filas">
                   {% for ficha in fichas %}
-                  <tr data-correo="{{ ficha.id }}" class="tabla-filas">
+                  <tr data-correo="{{ ficha.id }}" class="tabla-filas estado-{{ ficha.Estado|lower }}">
                     <td>{{ ficha.Nave }}</td>
                     <td>{{ ficha.fecha_creacion|date:'d-m-Y' }}</td>
                     <td id="estado{{ ficha.id }}">
-                      <div class="estado-container">
-                        <div class="estado-color" style="background-color: {{ ficha.color }};"></div>
-                        <div class="estado-texto">{{ ficha.Estado }}</div>
-                      </div>
+                        <div class="estado-container">
+                            <div class="estado-color" style="background-color: {{ ficha.color }};"></div>
+                            <div class="estado-texto">{{ ficha.Estado }}</div>
+                        </div>
                     </td>
                     <td>
-                      <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
-                      <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
-                      <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
+                        <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
+                        <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
+                        <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
                     </td>
                   </tr>
                   <script>

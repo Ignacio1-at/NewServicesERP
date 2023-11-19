@@ -124,7 +124,7 @@ def nueva_ficha(request):
 
         if form.is_valid():
             ficha = form.save(commit=False)
-            ficha.fecha_creacion = timezone.now().date()
+            ficha.fecha_creacion = timezone.localtime(timezone.now(), timezone=timezone.get_fixed_timezone(-240))
 
             # Establecer valores predeterminados para 'Estado' y 'color'
             ficha.Estado = 'No Iniciado' 

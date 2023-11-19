@@ -100,3 +100,34 @@ $(document).ready(function () {
         });
       }          
 });
+
+$(document).ready(function () {
+    // Manejar cambios en los checkboxes de estado
+    $('.estado-checkbox').change(function () {
+        // Obtener el estado del checkbox
+        var estado = $(this).data('estado').toLowerCase();
+
+        // Desmarcar los demás checkboxes
+        $('.estado-checkbox').not(this).prop('checked', false);
+
+        // Mostrar u ocultar las filas de la tabla según el estado
+        $('.tabla-filas tr').each(function () {
+            var fila = $(this);
+            var filaEstado = fila.hasClass('estado-' + estado);
+
+            if (estado === 'todos' || filaEstado) {
+                fila.show();
+            } else {
+                fila.hide();
+            }
+        });
+
+        // Restaurar todas las filas si no hay checkboxes seleccionados
+        if ($('.estado-checkbox:checked').length === 0) {
+            $('.tabla-filas tr').show();
+        }
+    });
+});
+
+
+
