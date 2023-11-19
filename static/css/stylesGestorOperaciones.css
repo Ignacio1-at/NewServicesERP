@@ -48,3 +48,20 @@
 ::placeholder {
   color: white;
 }
+
+.estado-container {
+  display: flex;
+  align-items: center;
+}
+
+.estado-color {
+  width: 20px; /* Ajusta según sea necesario */
+  height: 20px; /* Ajusta según sea necesario */
+  margin-right: 5px; /* Ajusta según sea necesario */
+  border-radius: 5px; /* Ajusta según sea necesario */
+}
+
+.estado-texto {
+  color: white;
+}
+

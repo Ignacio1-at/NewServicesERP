@@ -5,9 +5,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CustomLoginForm, FichaNavioForm
 from .models import FichaNavio
+from django.http import JsonResponse
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.core.serializers import serialize
 import logging
 
 logger = logging.getLogger(__name__)
+
 #---Excel
 import openpyxl
 from django.http import HttpResponse, JsonResponse
@@ -78,24 +83,80 @@ def eliminar_ficha(request, ficha_id):
     messages.success(request, 'Ficha de Navio eliminada exitosamente.')
     return redirect('erp:gestor-operaciones')
 
+def obtener_color_para_estado(estado):
+    colores_por_estado = {
+        'Terminado': '#00FF00',  # Verde
+        'En Proceso': '#FFFF00',  # Amarillo
+        'No Iniciado': '#FF0000',  # Rojo
+    }
+
+    # Devuelve el color asociado al estado, o blanco por defecto
+    return colores_por_estado.get(estado, '#FF0000')
+
+@require_POST
+def actualizar_estado(request, ficha_id):
+    print(f'Ficha ID: {ficha_id}')
+    try:
+        ficha = FichaNavio.objects.get(pk=ficha_id)
+        nuevo_estado = request.POST.get('nuevo_estado')
+
+        # Realiza la actualización del estado en la base de datos
+        ficha.Estado = nuevo_estado
+        ficha.color = obtener_color_para_estado(nuevo_estado)
+        ficha.save()
+
+        # Devuelve la ficha actualizada en formato JSON
+        ficha_actualizada_json = serialize('json', [ficha])
+
+        return JsonResponse({'mensaje': 'Estado actualizado correctamente', 'ficha': ficha_actualizada_json})
+    except FichaNavio.DoesNotExist:
+        return JsonResponse({'mensaje': 'La ficha no existe'}, status=404)
+    except Exception as e:
+        return JsonResponse({'mensaje': str(e)}, status=500)
+
 @login_required
 def nueva_ficha(request):
     if request.method == 'POST':
         form = FichaNavioForm(request.POST)
+
+        form.fields.pop('Estado', None)
+        form.fields.pop('color', None) 
+
         if form.is_valid():
             ficha = form.save(commit=False)
             ficha.fecha_creacion = timezone.now().date()
-            ficha.save()
+
+            # Establecer valores predeterminados para 'Estado' y 'color'
+            ficha.Estado = 'No Iniciado' 
+            ficha.color = obtener_color_para_estado(ficha.Estado)
+
+            # Establecer valores en la instancia del formulario
+            form.instance.Estado = ficha.Estado
+            form.instance.color = ficha.color
+
+            form.save()
             messages.success(request, 'Ficha de Navio guardada exitosamente.')
             print(f"Ficha guardada: {ficha}")
 
             # Redirige directamente desde Django
-            return redirect('erp:gestor-operaciones')
+            return JsonResponse({'redireccionar_a': reverse('erp:gestor-operaciones')})
         else:
-            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+            # Manejar el caso en que 'color' no está en el formulario
+            if 'color' not in form.fields:
+                messages.error(request, 'Error en el formulario. El campo "color" no está presente.')
+            else:
+                errors = form.errors.as_json()  # Obtener errores de validación como JSON
+                print(errors)
+                messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+                return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
 
-    return render(request, 'html/fichaNavio.html')
+    elif request.method == 'GET':
+        # Manejar solicitudes GET aquí, si es necesario
+        return render(request, 'html/fichaNavio.html')
 
+    else:
+        return JsonResponse({'mensaje': 'Método no permitido'}, status=405)
+    
 def descargar_excel(request):
     # Obtener datos de la base de datos
     fichas = FichaNavio.objects.all()

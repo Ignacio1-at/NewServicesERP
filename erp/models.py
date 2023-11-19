@@ -38,6 +38,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 #-------------------TABLA DE FICHA NAVIO -------------------------------------------------------------------------
 class FichaNavio(models.Model):
+    ESTADO_CHOICES = [
+        ('Terminado', 'Terminado'),
+        ('En Proceso', 'En Proceso'),
+        ('No Iniciado', 'No Iniciado'),
+    ]  
+    
     Nave = models.CharField(max_length=255)
     Viaje = models.CharField(max_length=255)
     Puerto = models.CharField(max_length=255)
@@ -58,6 +64,9 @@ class FichaNavio(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     cantidadPersonas = models.IntegerField()
     puerto = models.IntegerField()
+    Estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='No Iniciado')
+    color = models.CharField(max_length=20, default='#FFFFFF')  
+
 
     def __str__(self):
         return self.Nave

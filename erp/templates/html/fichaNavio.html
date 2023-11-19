@@ -1,72 +1,23 @@
-{% load static %}
+{% extends 'html/base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Navíos</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesNavio.css' %}">
-    <style>
-        /* Estilos CSS para dar formato a la página */
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .section {
-            margin: 20px 0;
-        }
-        .textbox {
-            width: 300px;
-            padding: 5px;
-            margin: 5px;
-            border-radius: 10px;
-            background-color: #01152a;
-            color: white;
-        }
-        .date-input {
-            width: 150px;
-            padding: 5px;
-            margin: 5px;
-            border-radius: 10px;
-            background-color: #01152a;
-            color: white;
-        }
+{% block title %}
+  Ficha de Motonaves
+{% endblock %}
 
-        img {
-            max-width: 200%;
-            height: auto;
-        }
+{% block module_styles %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesNavio.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesBase.css' %}" />
+{% endblock %}
 
-        .form-container {
-            margin-left: 20px;
-            text-align: left;
-        }
-
-        .textbox, .selectbox {
-            margin: 5px;
-        }
-
-        @media only screen and (min-width: 600px) {
-            .textbox, .date-input {
-                width: 300px;
-            }
-        }
-
-        @media only screen and (max-width: 600px) {
-            .textbox, .date-input {
-                width: calc(100% - 10px);
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>Ficha de Navíos</h1>
+{% block content %}
+    <h1>Ficha de Motonaves</h1>
     <div class="imagen-container">
         <img src="{% static 'images/lineaRoja.png' %}" alt="Linea Roja">
     </div>
 
     <div class="section">
-        <form method="post" id="fichaNavioForm">
+        <form id="fichaNavioForm" method="post" action="{% url 'erp:nueva_ficha' %}">
             {% csrf_token %}
             <input type="text" class="textbox" name="Nave" placeholder="Nave">
             <input type="text" class="textbox" name="Viaje" placeholder="Viaje">
@@ -144,50 +95,25 @@
             <button type="submit">Guardar Ficha</button>
         </form>
     </div>
+    <script>
+        // Define la variable con la URL
+        var nuevaFichaURL = '{% url "erp:nueva_ficha" %}';
+    </script>
+    <!-- Retroceder -->
+    <button type="button" onclick="goBack()">Volver</button>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 
-<!-- Retroceder -->
-<button type="button" onclick="goBack()">Volver</button>
-<script>
-    function goBack() {
-        window.history.back();
-    }
-</script>
+{% endblock %}
 
-<!-- Tu código HTML anterior -->
-
+{% block module_scripts %}
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="{% static 'js/scriptNavio.js' %}"></script>
 <script>
-    $(document).ready(function () {
-        $('#fichaNavioForm').submit(function (event) {
-            event.preventDefault();
-
-            $.ajax({
-                type: 'POST',
-                url: '{% url "erp:nueva_ficha" %}',
-                data: $('#fichaNavioForm').serialize() + "&{% csrf_token %}",
-                success: function (data) {
-                    console.log(data);
-
-                    if (data.redirect_url) {
-                        console.log("Redireccionando a:", data.redirect_url);
-                        window.location.href = data.redirect_url;
-                    } else {
-                        console.error("La respuesta no contiene una URL de redirección.");
-                    }
-                },
-                error: function (data) {
-                    console.log(data);
-                }
-            });
-        });
-    });
+  document.addEventListener('DOMContentLoaded', inicializarScripts);
 </script>
 
-<script src="{% static 'js/scriptNavio.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', inicializarScripts);
-</script>
-
-</body>
-</html>
+{% endblock %}

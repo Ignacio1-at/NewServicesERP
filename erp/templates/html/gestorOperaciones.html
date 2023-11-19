@@ -14,63 +14,72 @@
   <div class="container" style="margin-top: 20px;">
     <div class="row">
       <div class="row">
-        <div class="col-md-3" style="margin-left: 1.8%; width: 25%;">
-          <img src="{% static 'images/Operaciones.png' %}" alt="Texto alternativo de la imagen" class="mb-2" width="10%" />
-          <span style="color: white;">Operaciones</span>
-        </div>
-        <div class="col-md-9" style="width: auto; margin-top: 0.5%; position: fixed; margin-left: 17.9%">
-          <input class="bg-personalizado rounded-pill" type="text" id="Buscar" placeholder="   Buscar" style="color: #ffffff; background-color: #01152a; border: none;" />
-        </div>
+          <div class="col-md-3" style="margin-left: 1.8%; width: 25%;">
+              <img src="{% static 'images/Operaciones.png' %}" alt="Texto alternativo de la imagen" class="mb-2" width="10%" />
+              <span style="color: white;">Operaciones</span>
+          </div>
+          <div class="col-md-9" style="width: auto; margin-top: 0.5%;">
+              <input class="bg-personalizado rounded-pill" type="text" id="Buscar" placeholder="   Buscar x Motonave" style="color: #ffffff; background-color: #01152a; border: none;" />
+          </div>
       </div>
-    </div>
+  </div>
 
-    <div class="container px-4">
-      <div class="row">
-        <div class="col-md-3" style="width: 25%;">
-          <button type="button" class="btn btn-personalizado" onclick="window.location.href='{% url 'erp:nueva_ficha' %}'" style="background-color: #a30000;border-radius: 10px;">+ Nueva Motonave</button>
-          <div class="form-check" style="margin-top: 10px;">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-            <label class="form-check-label" for="flexCheckDefault" style="color: white; background-color: transparent;">Terminado</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-            <label class="form-check-label" for="flexCheckDefault" style="color: white; background-color: transparent;">En Proceso</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-            <label class="form-check-label" for="flexCheckDefault" style="color: white; background-color: transparent;">No Iniciado</label>
-          </div>
-          <a class="btn btn-secondary" href="{% url 'erp:menu' %}" style="margin-top: 5%;">Volver</a>
+  <div class="container px-4">
+    <div class="row">
+      <div class="col-md-3" style="width: 25%;">
+        <button type="button" class="btn btn-personalizado" onclick="window.location.href='{% url 'erp:nueva_ficha' %}'" style="background-color: #a30000;border-radius: 10px;">+ Nueva Motonave</button>
+        <div class="form-check" style="margin-top: 10px;">
+          <input class="form-check-input" type="checkbox" value="" id="terminadoCheckbox" data-estado="Terminado" />
+          <label class="form-check-label" for="terminadoCheckbox" style="color: white; background-color: transparent;">Terminado</label>
         </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="enProcesoCheckbox" data-estado="En Proceso" />
+          <label class="form-check-label" for="enProcesoCheckbox" style="color: white; background-color: transparent;">En Proceso</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="noIniciadoCheckbox" data-estado="No Iniciado" />
+          <label class="form-check-label" for="noIniciadoCheckbox" style="color: white; background-color: transparent;">No Iniciado</label>
+        </div>
+        <a class="btn btn-secondary" href="{% url 'erp:menu' %}" style="margin-top: 5%;">Volver</a>
+      </div>
 
-        <div class="col-md-9" style="width: 75%;">
-            <div class="p-3 table-container" style="width: 100%; background-color: #01152a; border-radius: 10px;">
-            <div class="d-flex flex-column h-100 w-100">
-              <div class="card-body flex-grow-1" style="color: white;">
-                <table class="table" style="color: white; width: 100%;">
-                  <thead>
-                    <tr>
-                      <th>Motonave</th>
-                      <th>Fecha</th>
-                      <th></th>
-                      <th>Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for ficha in fichas %}
-                      <tr data-correo="{{ ficha.id }}">
-                        <td>{{ ficha.Nave }}</td>
-                        <td>{{ ficha.fecha_creacion|date:'d-m-Y' }}</td>
-                        <td>{{ ficha.Estado }}</td>
-                        <td>
-                          <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
-                          <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+      <div class="col-md-9" style="width: 75%;">
+        <div class="p-3 table-container" style="width: 100%; background-color: #01152a; border-radius: 10px;">
+          <div class="d-flex flex-column h-100 w-100">
+            <div class="card-body flex-grow-1" style="color: white;">
+              <!-- Table moved here -->
+              <table class="table" style="color: white; width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Motonave</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="tabla-filas">
+                  {% for ficha in fichas %}
+                  <tr data-correo="{{ ficha.id }}" class="tabla-filas">
+                    <td>{{ ficha.Nave }}</td>
+                    <td>{{ ficha.fecha_creacion|date:'d-m-Y' }}</td>
+                    <td id="estado{{ ficha.id }}">
+                      <div class="estado-container">
+                        <div class="estado-color" style="background-color: {{ ficha.color }};"></div>
+                        <div class="estado-texto">{{ ficha.Estado }}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
+                      <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
+                      <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
+                    </td>
+                  </tr>
+                  <script>
+                    var actualizarEstadoUrl{{ ficha.id }} = '/erp/actualizar_estado/' + {{ ficha.id }} + '/';
+                  </script>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -80,7 +89,8 @@
 {% endblock %}
 
 {% block module_scripts %}
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
   <!-- Scripts específicos de la página de menú -->
   <script src="{% static 'js/scriptGestorOperaciones.js' %}"></script>
-  
 {% endblock %}
