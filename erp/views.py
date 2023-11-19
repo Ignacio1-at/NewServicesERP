@@ -3,9 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import CustomLoginForm, FichaNavioForm, FichaPersonalForm, HijoFormSet  # <-- Actualiza esta línea
-from .models import FichaNavio, FichaPersonal
-from django.urls import reverse
+from .forms import CustomLoginForm, FichaNavioForm
+from .models import FichaNavio
 import logging
 
 logger = logging.getLogger(__name__)
@@ -148,37 +147,3 @@ def descargar_excel(request):
 
 
 #-------------RRHH
-@login_required
-def gestor_personal(request):
-
-    nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
-    
-    return render(request, 'html/gestorPersonal.html', {'nombre_usuario': nombre_usuario})
-
-from django.http import JsonResponse
-
-@login_required
-def nueva_fichaPersonal(request):
-    if request.method == 'POST':
-        logger.debug('Datos recibidos en la vista: %s ', request.POST)
-        ficha_form = FichaPersonalForm(request.POST)
-        hijos_formset = HijoFormSet(request.POST, prefix='hijos')
-
-        # Verifica si ambos formularios son válidos y si se han proporcionado datos
-        if ficha_form.is_valid() and hijos_formset.is_valid() and (ficha_form.cleaned_data or any(hijos_formset.cleaned_data)):
-            ficha_personal = ficha_form.save()
-            hijos_formset.instance = ficha_personal
-            hijos_formset.save()
-
-            messages.success(request, 'Ficha de Personal y datos de hijos guardados exitosamente.')
-            return JsonResponse({'redirect_url': '/erp/gestor-personal/'})
-        else:
-            messages.error(request, 'Error en el formulario. Verifica los datos ingresados.')
-            print('Errores del formulario:', ficha_form.errors.as_json())
-            return JsonResponse({'error': 'Error en el formulario. Verifica los datos ingresados.'}, status=400)
-
-    else:
-        ficha_form = FichaPersonalForm()
-        hijos_formset = HijoFormSet(prefix='hijos')
-
-    return render(request, 'html/fichaPersonal.html', {'ficha_form': ficha_form, 'hijos_formset': hijos_formset})

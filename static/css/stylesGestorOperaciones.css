@@ -1,68 +1,35 @@
-.Set_Botones {
-  align-items: center;
-}
-
-.Operaciones {
-  background-color: #01152a;
-  /* Cambia el color de fondo del botón según tus preferencias */
-  color: white;
-  /* Cambia el color del texto del botón según tus preferencias */
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 10px;
-
-}
-
-.btn-operaciones {
-  width: 200px;
-  /* Ajusta el ancho de la imagen según tus preferencias */
-  height: 270px;
-  /* Ajusta la altura de la imagen según tus preferencias */
-  display: block;
-  /* Esto ayuda a centrar la imagen dentro del botón */
-  margin: 0 auto;
-  /* Esto también ayuda a centrar la imagen */
-  color: white;
-}
-
-.Botones button {
-  background-color: #01152a;
-  /* Cambia el color de fondo del botón según tus preferencias */
-  color: white;
-  /* Cambia el color del texto del botón según tus preferencias */
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 10px;
-}
-
-.Botones button img {
-  width: 50px;
-  /* Ajusta el ancho de la imagen según tus preferencias */
-  height: 50px;
-  /* Ajusta la altura de la imagen según tus preferencias */
-  display: block;
-  /* Esto ayuda a centrar la imagen dentro del botón */
-  margin: 0 auto;
-  /* Esto también ayuda a centrar la imagen */
-}
-
-.Botones button br {
-  content: " ";
-  display: block;
-  margin: 5px 0;
-}
-
-.table-container {
-  max-height: 70vh;  /* Establece la altura máxima de la tabla */
-  overflow-y: auto;  /* Agrega un desplazamiento vertical cuando sea necesario */
-}
-
-.container-md px-4 d-flex justify-content-center align-items-center {
+/* Ajusta el margen según sea necesario */
+.container-md.px-4.d-flex.justify-content-center.align-items-center {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.table-container {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.table thead {
+  background-color: #01152a;
+  color: white;
+  position: sticky;
+  top: -16px;
+  z-index: 1;
+}
+
+/* Ajusta el tamaño del texto y el espaciado del encabezado según sea necesario */
+.table thead th {
+  font-size: 20px;
+  padding: 20px;
+  text-align: left;
+  font-weight: bold; /* Hace que el texto sea negrita */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Agrega un efecto de sombra al texto */
+}
+
+/* Cambia el color de fondo al pasar el mouse sobre las celdas del encabezado */
+.table thead th:hover {
+  background-color: #01152a;
 }
 
 .texto-invisible {

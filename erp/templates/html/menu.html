@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container Set_Botones px-4 d-flex justify-content-center align-items-center vh-100">
+    <div class="container Set_Botones px-4 d-flex justify-content-center align-items-center">
         <div class="row gx-5">
             <div class="col-md-6 col-lg-6">
                 <div class="p-3 Operaciones">
@@ -35,7 +35,7 @@
                     <div class="row gy-5">
                         <div class="col-md-6 col-lg-6">
                             <div class="p-3 Botones">
-                                <button class="BotonMantenimiento" onclick="accionBoton()">
+                                <button class="BotonMantenimiento"  onclick="accionBoton()">
                                     <img src="{% static 'images/Mantenimiento.png' %}" alt="Texto alternativo de la imagen">
                                     <br>
                                     Mantenimiento
@@ -47,27 +47,27 @@
                                 <button class="BotonOtro" onclick="accionBoton()">
                                     <img src="{% static 'images/Informe.png' %}" alt="Texto alternativo de la imagen">
                                     <br>
-                                    Informe
+                                    Documentos
                                 </button>
                             </div>
                         </div>                            
                     </div>
                 </div>
 
-                <div class="container RRHH_SEGURIDAD px-4 d-flex justify-content-center align-items-center">
+                <div class="container RRHH_INVENTARIO px-4 d-flex justify-content-center align-items-center">
                     <div class="row gy-5">
                         <div class="col-md-6 col-lg-6">
                             <div class="p-3 Botones">
                                 <button class="BotonOtro" onclick="accionBoton()">
-                                    <img src="{% static 'images/Seguridad.png' %}" alt="Texto alternativo de la imagen">
+                                    <img src="{% static 'images/Inventario.png' %}" alt="Texto alternativo de la imagen">
                                     <br>
-                                    Seguridad
+                                    Inventario
                                 </button>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-6">
                             <div class="p-3 Botones">
-                                <button class="BotonOtro" onclick="window.location.href='{% url 'erp:gestor_personal' %}'">
+                                <button class="BotonOtro" onclick="accionBoton()">
                                     <img src="{% static 'images/RRHH.png' %}" alt="Texto alternativo de la imagen">
                                     <br>
                                     Recursos humanos

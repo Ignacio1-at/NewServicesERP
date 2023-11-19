@@ -87,24 +87,6 @@ DATABASES = {
     }
 }
 
-# Configuración de envío de correo electrónico
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Servidor SMTP de Gmail
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'serviceserp65@gmail.com'  # Tu dirección de correo electrónico
-EMAIL_HOST_PASSWORD = 'nACHO2312173'  # Tu contraseña de correo electrónico
-
-# Configuración para el restablecimiento de contraseña
-# Utiliza el envío de correo electrónico para el restablecimiento de contraseña
-# y establece el enlace de restablecimiento de contraseña en tu dominio
-PASSWORD_RESET_TIMEOUT = 3600  # Tiempo en segundos para que el enlace de restablecimiento de contraseña sea válido (1 hora)
-
-# Configura las URLs para las plantillas de restablecimiento de contraseña
-PASSWORD_RESET_FROM_EMAIL = 'your-email@example.com'  # Dirección de correo electrónico que enviará el correo de restablecimiento de contraseña
-PASSWORD_RESET_EMAIL_SUBJECT = 'Restablecimiento de contraseña'  # Asunto del correo de restablecimiento de contraseña
-PASSWORD_RESET_URL = '/reset-password/'  # URL para la vista de restablecimiento de contraseña
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

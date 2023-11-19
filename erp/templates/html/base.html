@@ -12,7 +12,7 @@
     {% block module_styles %}{% endblock %}
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Puedes agregar más enlaces a hojas de estilo CSS si es necesario -->
+    <!-- hojas de estilo CSS si es necesario -->
 </head>
 <body>
     <!-- Navbar  -->
@@ -21,7 +21,7 @@
             <a class="navbar-brand mr-auto" href="#">
                 <img src="{% static 'images/logopng.png' %}" alt="" width="100" height="100">
             </a>
-            <!-- Example single danger button -->
+            <!-- button -->
             <div class="btn-group">
                 <button type="button" class="btn btn-personalizado dropdown-toggle text_white" data-bs-toggle="dropdown" aria-expanded="false">
                     <!-- CAMBIAR PARA QUE SE LEA DESDE LA BASE DE DATOS -->
@@ -29,8 +29,6 @@
                 </button>                    
                 
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Ver perfil</a></li>                 
-                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="{% url 'erp:logout' %}">Cerrar sesión</a></li>
                 </ul>
             </div>                
@@ -42,10 +40,15 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Pie de página -->
+    <footer class="text-center mt-5 ">
+        <p>© 2023 Maritime Services SpA. Los derechos reservados por KodeThree.</p>
+    </footer>
+
     <!-- Enlace a scripts específicos del módulo -->
     {% block module_scripts %}{% endblock %}
 
-    <!-- Agrega aquí tus scripts de JavaScript si es necesario -->
+    <!-- Aquí los scripts de JavaScript -->
     <script src="{% static 'js/scriptBase.js' %}"></script>
      
     <!-- Scripts de Bootstrap -->

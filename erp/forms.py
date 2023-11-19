@@ -1,5 +1,5 @@
 from django import forms
-from .models import FichaNavio, FichaPersonal, Hijo
+from .models import FichaNavio
 
 class CustomLoginForm(forms.Form):
     email = forms.EmailField(label='E-mail')
@@ -10,15 +10,3 @@ class FichaNavioForm(forms.ModelForm):
         model = FichaNavio
         fields = '__all__'
         
-class HijoForm(forms.ModelForm):
-    class Meta:
-        model = Hijo
-        fields = '__all__'
-               
-class FichaPersonalForm(forms.ModelForm):
-    class Meta:
-        model = FichaPersonal
-        fields = '__all__'
-
-# Mueve este bloque al nivel superior
-HijoFormSet = forms.inlineformset_factory(FichaPersonal, Hijo, form=HijoForm, extra=1)
