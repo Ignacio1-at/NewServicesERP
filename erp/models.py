@@ -72,3 +72,87 @@ class FichaNavio(models.Model):
         return self.Nave
     
 #----------------------TABLA DE FICHA PERSONAL-----------------------------------------------------------------------------    
+
+class Hijo(models.Model):
+    nombre = models.CharField(max_length=255)
+    rut = models.CharField(max_length=20, unique=True)
+    apellido_paterno = models.CharField(max_length=255)
+    apellido_materno = models.CharField(max_length=255)
+    fecha_nacimiento = models.DateField()
+    sexo = models.CharField(max_length=20, choices=[('Masculino', 'Masculino'), ('Femenino', 'Femenino')])
+
+    ficha_personal = models.ForeignKey('FichaPersonal', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'{self.nombre} ({self.rut})'
+
+
+#--------------------Seccion    
+
+class FichaPersonal(models.Model):
+    ESTADO_CHOICES = [
+        ('Disponible', 'Disponible'),
+        ('En Operacion', 'En Operacion'),
+        ('No Disponible', 'No Disponible'),
+    ]
+
+    ESTADO_CIVIL_CHOICES = [
+        ('Soltero', 'Soltero'),
+        ('Casado', 'Casado'),
+        ('Viudo', 'Viudo'),
+    ]
+
+    BANCO_CHOICES = [
+        ('', 'Selecciona Banco'),
+        ('BCI', 'BCI'),
+        ('Banco Estado', 'Banco Estado'),
+    ]
+
+    TALLA_CHOICES = [
+        ('', 'Selecciona Talla'),
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL'),
+    ]
+
+    Estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Disponible')
+    color = models.CharField(max_length=20, default='#00FF00')
+
+    apellido_paterno = models.CharField(max_length=255)
+    apellido_materno = models.CharField(max_length=255)
+    nombres = models.CharField(max_length=255)
+    rut = models.CharField(max_length=20, unique=True)
+    estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL_CHOICES)
+    nacionalidad = models.CharField(max_length=255)
+    direccion = models.CharField(max_length=255)
+    comuna = models.CharField(max_length=255)
+    correo_electronico = models.EmailField()
+    celular = models.CharField(max_length=20)
+    fecha_nacimiento = models.DateField()
+
+    afp = models.CharField(max_length=255)
+    salud = models.CharField(max_length=255)
+    otros_previsionales = models.CharField(max_length=255)
+
+    tipo_cuenta_bancaria = models.CharField(max_length=255)
+    numero_cuenta_bancaria = models.CharField(max_length=255)
+    banco = models.CharField(max_length=255, choices=BANCO_CHOICES)
+
+    contacto_emergencia_nombre = models.CharField(max_length=255)
+    contacto_emergencia_celular = models.CharField(max_length=20)
+    contacto_emergencia_parentesco = models.CharField(max_length=255)
+
+    hijos = models.ManyToManyField(Hijo, blank=True)
+
+    talla_polera = models.CharField(max_length=5, choices=TALLA_CHOICES)
+    talla_pantalon = models.CharField(max_length=5, choices=TALLA_CHOICES)
+    calzado_seguridad = models.IntegerField()
+    talla_overol = models.CharField(max_length=5, choices=TALLA_CHOICES)
+    talla_traje_agua = models.CharField(max_length=5, choices=TALLA_CHOICES)
+
+    documentos = models.FileField(upload_to='documentos/')
+
+    def __str__(self):
+        return f'{self.nombres} {self.apellido_paterno} ({self.rut})'
+

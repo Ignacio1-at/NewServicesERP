@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import CustomLoginForm, FichaNavioForm
-from .models import FichaNavio
+from .forms import CustomLoginForm, FichaNavioForm, FichaPersonalForm
+from .models import FichaNavio, FichaPersonal
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
@@ -208,3 +208,66 @@ def descargar_excel(request):
 
 
 #-------------RRHH
+
+@login_required
+def gestorPersonal(request):
+    fichas = FichaPersonal.objects.all()
+    for ficha in fichas:
+        print(f"Ficha: {ficha}")
+    
+    nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+    if request.method == 'POST':
+        form = FichaPersonalForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ficha de Personal guardada exitosamente.')
+            return redirect('erp:gestor-personal')
+        else:
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+    else:
+        form = FichaPersonalForm()
+
+    return render(request, 'html/gestorPersonal.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+@login_required
+def nueva_fichaPersonal(request):
+    if request.method == 'POST':
+        form = FichaPersonalForm(request.POST)
+
+        form.fields.pop('Estado', None)
+        form.fields.pop('color', None) 
+
+        if form.is_valid():
+            ficha = form.save(commit=False)
+
+            # Establecer valores predeterminados para 'Estado' y 'color'
+            ficha.Estado = 'No Iniciado' 
+            ficha.color = obtener_color_para_estado(ficha.Estado)
+
+            # Establecer valores en la instancia del formulario
+            form.instance.Estado = ficha.Estado
+            form.instance.color = ficha.color
+
+            form.save()
+            messages.success(request, 'Ficha de Personal guardada exitosamente.')
+            print(f"Ficha guardada: {ficha}")
+
+            # Redirige directamente desde Django
+            return JsonResponse({'redireccionar_a': reverse('erp:gestor-personal')})
+        else:
+            # Manejar el caso en que 'color' no está en el formulario
+            if 'color' not in form.fields:
+                messages.error(request, 'Error en el formulario. El campo "color" no está presente.')
+            else:
+                errors = form.errors.as_json()  # Obtener errores de validación como JSON
+                print(errors)
+                messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+                return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
+
+    elif request.method == 'GET':
+        # Manejar solicitudes GET aquí, si es necesario
+        return render(request, 'html/fichaPersonal.html')
+
+    else:
+        return JsonResponse({'mensaje': 'Método no permitido'}, status=405)

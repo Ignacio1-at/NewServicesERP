@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import home, login_view, menu_view, gestorOperaciones, nueva_ficha, eliminar_ficha, descargar_excel, actualizar_estado
+from .views import home, login_view, menu_view, gestorOperaciones, nueva_ficha, eliminar_ficha, descargar_excel, actualizar_estado, gestorPersonal
 
 app_name = 'erp'  
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('eliminar-ficha/<int:ficha_id>/', eliminar_ficha, name='eliminar-ficha'),
     path('descargar-excel/', descargar_excel, name='descargar-excel'),
     path('actualizar_estado/<int:ficha_id>/', actualizar_estado, name='actualizar_estado'),
+    path('gestor-personal/', gestorPersonal, name='gestor-personal'),
 
     
     # Otras rutas aquí...

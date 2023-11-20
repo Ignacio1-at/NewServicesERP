@@ -1,6 +1,6 @@
 {% extends 'html/base.html' %}
 
-{% block title %}Gestor del Personal{% endblock %}
+{% block title %}Recursos Humanos{% endblock %}
 
 {% block module_styles %}
     {% load static %}
@@ -9,7 +9,84 @@
 {% endblock %}
 
 {% block content %}
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+      <div class="row">
+          <div class="col-md-3" style="margin-left: 1.8%; width: 25%;">
+              <img src="{% static 'images/RRHH.png' %}" alt="Texto alternativo de la imagen" class="mb-2" width="10%" />
+              <span style="color: white;">Personal</span>
+          </div>
+          <div class="col-md-9" style="width: auto; margin-top: 0.5%;">
+              <input class="bg-personalizado rounded-pill" type="text" id="BuscarNombre" placeholder="   Buscar x Nombre" style="color: #ffffff; background-color: #01152a; border: none;" />
+              <input class="bg-personalizado rounded-pill" type="text" id="BuscarRut" placeholder="   Buscar x Rut" style="color: #ffffff; background-color: #01152a; border: none;" />
+          </div>
+      </div>
+  </div>
 
+  <div class="container px-4">
+    <div class="row">
+      <div class="col-md-3" style="width: 25%;">
+        <button type="button" class="btn btn-personalizado" onclick="window.location.href='{% url 'erp:nueva_ficha' %}'" style="background-color: #a30000;border-radius: 10px;">+ Agregar Personal</button>
+        <div class="form-check" style="margin-top: 10px;">
+          <input class="form-check-input estado-checkbox" type="checkbox" value="Disponible" id="terminadoCheckbox" data-estado="Disponible" />
+          <label class="form-check-label" for="disponibleCheckbox" style="color: white; background-color: transparent;">Disponible</label>
+        </div>
+        <!-- CheckBox-->
+        <div class="form-check">
+          <input class="form-check-input estado-checkbox" type="checkbox" value="En Proceso" id="enOperacionCheckbox" data-estado="En Operacion" />
+          <label class="form-check-label" for="enOperacionCheckbox" style="color: white; background-color: transparent;">En Operación</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input estado-checkbox" type="checkbox" value="No Disponible" id="noDisponibleCheckbox" data-estado="No Disponible" />
+          <label class="form-check-label" for="noDisponibleCheckbox" style="color: white; background-color: transparent;">No Disponible</label>
+        </div>
+
+        <a class="btn btn-secondary" href="{% url 'erp:menu' %}" style="margin-top: 5%;">Volver</a>
+      </div>
+
+      <div class="col-md-9" style="width: 75%;">
+        <div class="p-3 table-container" style="width: 100%; background-color: #01152a; border-radius: 10px;">
+          <div class="d-flex flex-column h-100 w-100">
+            <div class="card-body flex-grow-1" style="color: white;">
+              <!-- Table moved here -->
+              <table class="table" style="color: white; width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Rut</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="tabla-filas">
+                  {% for ficha in fichas %}
+                  <tr data-correo="{{ ficha.id }}" class="tabla-filas estado-{{ ficha.Estado|lower }}">
+                    <td>{{ ficha.Nave }}</td>
+                    <td>{{ ficha.fecha_creacion|date:'d-m-Y' }}</td>
+                    <td id="estado{{ ficha.id }}">
+                        <div class="estado-container">
+                            <div class="estado-color" style="background-color: {{ ficha.color }};"></div>
+                            <div class="estado-texto">{{ ficha.Estado }}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
+                        <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
+                        <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
+                    </td>
+                  </tr>
+                  <script>
+                    var actualizarEstadoUrl{{ ficha.id }} = '/erp/actualizar_estado/' + {{ ficha.id }} + '/';
+                  </script>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block module_scripts %}
