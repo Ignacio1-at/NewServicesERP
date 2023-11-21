@@ -26,7 +26,7 @@
   <div class="container px-4">
     <div class="row">
       <div class="col-md-3" style="width: 25%;">
-        <button type="button" class="btn btn-personalizado" onclick="window.location.href='{% url 'erp:nueva_ficha' %}'" style="background-color: #a30000;border-radius: 10px;">+ Agregar Personal</button>
+        <button type="button" class="btn btn-personalizado" onclick="window.location.href='{% url 'erp:nueva_fichaPersonal' %}'" style="background-color: #a30000;border-radius: 10px;">+ Agregar Personal</button>
         <div class="form-check" style="margin-top: 10px;">
           <input class="form-check-input estado-checkbox" type="checkbox" value="Disponible" id="terminadoCheckbox" data-estado="Disponible" />
           <label class="form-check-label" for="disponibleCheckbox" style="color: white; background-color: transparent;">Disponible</label>
@@ -58,27 +58,27 @@
                     <th>Acción</th>
                   </tr>
                 </thead>
-                <tbody class="tabla-filas">
-                  {% for ficha in fichas %}
-                  <tr data-correo="{{ ficha.id }}" class="tabla-filas estado-{{ ficha.Estado|lower }}">
-                    <td>{{ ficha.Nave }}</td>
-                    <td>{{ ficha.fecha_creacion|date:'d-m-Y' }}</td>
-                    <td id="estado{{ ficha.id }}">
-                        <div class="estado-container">
-                            <div class="estado-color" style="background-color: {{ ficha.color }};"></div>
-                            <div class="estado-texto">{{ ficha.Estado }}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
-                        <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
-                        <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
-                    </td>
-                  </tr>
-                  <script>
-                    var actualizarEstadoUrl{{ ficha.id }} = '/erp/actualizar_estado/' + {{ ficha.id }} + '/';
-                  </script>
-                  {% endfor %}
+                  <tbody class="tabla-filas">
+                    {% for ficha in fichas %}
+                    <tr data-correo="{{ ficha.id }}" class="tabla-filas estado-{{ ficha.Estado|lower }}">
+                        <td>{{ ficha.nombres }} {{ ficha.apellido_paterno }} {{ ficha.apellido_materno }}</td>
+                        <td>{{ ficha.rut }}</td>
+                        <td id="estado{{ ficha.id }}">
+                            <div class="estado-container">
+                                <div class="estado-color" style="background-color: {{ ficha.color }};"></div>
+                                <div class="estado-texto">{{ ficha.Estado }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
+                            <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
+                            <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    <script>
+                        var actualizarEstadoUrl{{ ficha.id }} = '/erp/actualizar_estado/' + {{ ficha.id }} + '/';
+                    </script>
+                    {% endfor %}
                 </tbody>
               </table>
             </div>

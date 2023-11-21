@@ -1,0 +1,72 @@
+{% extends 'html/base.html' %}
+
+{% block title %}
+  Gestor Herramientas
+{% endblock %}
+
+{% block module_styles %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesGestorHerramientas.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesBase.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container " style="margin-top: 20px;">
+      <div class="row ">
+        <div class="row">
+          <div class="col-md-3" style="margin-left: 0.9%;width: 25%;">
+            <img src="{% static 'images/IconoHerramientas.png' %}" alt="Texto alternativo de la imagen" class="mb-2" width="10%">
+            <span style="color: white;">Herramientas</span>
+          </div>
+          <div class="col-md-9" style="width: auto;">
+            <input class="bg-personalizado rounded-pill" type="text" id="Buscar" placeholder="   Buscar" style="color: #ffffff; background-color: #01152a; border: none;">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container px-4">
+      <div class="row">
+        <div class="col-md-3" style="width: 25%;">
+          <button type="button" class="btn btn-personalizado" style="background-color: #a30000; " onclick="window.location.href='{% url 'erp:ficha-herramientas' %}'">+    Nueva Herramienta</button>
+          <div></div>
+          <a class="btn btn-secondary" href="{% url 'erp:inventario' %}" style="margin-top: 5%;">Volver</a>
+        </div>
+        <div class="col-md-9" style="width: 75%;">
+          <div class="p-3" style="width: 100%; background-color: #01152a; border-radius: 10px; max-height: 70vh; overflow-y: auto;">
+            <div class="d-flex flex-column h-50 w-100">
+            <div class="card-body flex-grow-1" style="color: white;">
+              <table class="table " style="color: white; width: 100%;">	
+              <thead class="">
+                <tr>
+
+                <th>Tipo de herramienta</th>
+
+                <th>Fecha Ingreso</th>
+
+                <th>Accion</th>
+                </tr>
+              </thead>
+              <tbody class="tabla-filas">
+                {% for ficha in fichas %}
+                  <tr data-correo="{{ ficha.id }}" class="tabla-filas">
+                    <td>{{ ficha.tipo_herramienta }}</td>
+                    <td>{{ ficha.fecha_ingreso|date:'d-m-Y' }}</td>	
+                    <td>
+                      <a href="{% url 'erp:descargar-excelHerramientas' %}" target="_blank">
+                        <img src="{% static 'images/Download.png' %}" alt="Descargar" style="width: 50px; height: 50px;">
+                      </a>
+                      <a href="{% url 'erp:eliminar-fichaHerramientas' ficha.id %}"onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">
+                        <img src="{% static 'images/Eliminar.png' %}" alt="Eliminar" style="width: 50px; height: 50px;">
+                      </a>
+                    </td>								
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>	
+{% endblock %}

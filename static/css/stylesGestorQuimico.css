@@ -1,0 +1,44 @@
+.fondo {
+  background-image: url('Fondo.png');
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.btn-personalizado {
+  background-color: 01152a;
+  color: white !important;
+  border: none;
+}
+
+.container-md px-4 d-flex justify-content-center align-items-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.texto-invisible {
+  color: white;
+  font-size: 24px;
+}
+
+.texto-blanco {
+  color: white;
+}
+
+#Buscar {
+  color: white;
+}
+
+.fondo {
+  background-color: #01152a;
+}
+
+::placeholder {
+  color: white;
+}
+
+.Detalle {
+  margin-left: 9.3%
+}

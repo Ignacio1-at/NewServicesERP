@@ -71,9 +71,15 @@
                         </div>
                     </td>
                     <td>
-                        <button class="btn btn-secondary cambiar-estado" data-id="{{ ficha.id }}">Cambiar Estado</button>
-                        <a href="{% url 'erp:descargar-excel' %}" target="_blank">Descargar</a>
-                        <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
+                      <a class="btn btn-link cambiar-estado" data-id="{{ ficha.id }}">
+                        <img src="{% static 'images/CambiarEstado.png' %}" alt="Cambiar Estado" style="width: 40px; height: 40px;">
+                      </a>
+                        <a href="{% url 'erp:descargar-excel' ficha.id %}" target="_blank">
+                            <img src="{% static 'images/Download.png' %}" alt="Descargar" style="width: 50px; height: 50px;">
+                        </a>
+                        <a href="{% url 'erp:eliminar-ficha' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">
+                            <img src="{% static 'images/Eliminar.png' %}" alt="Eliminar" style="width: 50px; height: 50px;">
+                        </a>
                     </td>
                   </tr>
                   <script>
@@ -96,3 +102,4 @@
   <!-- Scripts específicos de la página de menú -->
   <script src="{% static 'js/scriptGestorOperaciones.js' %}"></script>
 {% endblock %}
+

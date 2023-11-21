@@ -1,14 +1,16 @@
 from django.utils import timezone
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import CustomLoginForm, FichaNavioForm, FichaPersonalForm
-from .models import FichaNavio, FichaPersonal
+from .forms import CustomLoginForm, FichaNavioForm, FichaPersonalForm, FichaQuimicoForm, FichaVehiculoForm, FichaHerramientasForm, FichaMantenimientoForm
+from .models import FichaNavio, FichaPersonal, FichaQuimico, FichaVehiculo, FichaHerramientas, FichaMantenimiento
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.core.serializers import serialize
+from django.core.exceptions import ValidationError
+from django.forms.utils import ErrorDict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -119,47 +121,57 @@ def nueva_ficha(request):
     if request.method == 'POST':
         form = FichaNavioForm(request.POST)
 
-        form.fields.pop('Estado', None)
-        form.fields.pop('color', None) 
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # En caso de una solicitud AJAX, no es necesario validar 'Estado' y 'color'
+            form.fields['Estado'].required = False
+            form.fields['color'].required = False
 
         if form.is_valid():
             ficha = form.save(commit=False)
-            ficha.fecha_creacion = timezone.localtime(timezone.now(), timezone=timezone.get_fixed_timezone(-240))
+            ficha.fecha_creacion = timezone.localtime(timezone.now())
 
             # Establecer valores predeterminados para 'Estado' y 'color'
             ficha.Estado = 'No Iniciado' 
             ficha.color = obtener_color_para_estado(ficha.Estado)
 
-            # Establecer valores en la instancia del formulario
-            form.instance.Estado = ficha.Estado
-            form.instance.color = ficha.color
+            ficha.save()
 
-            form.save()
-            messages.success(request, 'Ficha de Navio guardada exitosamente.')
-            print(f"Ficha guardada: {ficha}")
-
-            # Redirige directamente desde Django
-            return JsonResponse({'redireccionar_a': reverse('erp:gestor-operaciones')})
-        else:
-            # Manejar el caso en que 'color' no está en el formulario
-            if 'color' not in form.fields:
-                messages.error(request, 'Error en el formulario. El campo "color" no está presente.')
+            # Verificar si la solicitud es AJAX
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                # Si es una solicitud AJAX, devolver un objeto JSON con la URL a la que redirigir
+                return JsonResponse({
+                    'mensaje': 'Ficha de Navio guardada exitosamente.',
+                    'redireccionar_a': reverse('erp:gestor-operaciones')
+                })
             else:
-                errors = form.errors.as_json()  # Obtener errores de validación como JSON
-                print(errors)
+                # Si no es una solicitud AJAX, enviar mensaje de éxito y redirigir normalmente
+                messages.success(request, 'Ficha de Navio guardada exitosamente.')
+                return redirect('erp:gestor-operaciones')
+        else:
+            # Si el formulario no es válido, recoger los errores
+            errors = form.errors
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                # Si es una solicitud AJAX, devolver los errores en formato JSON
+                return JsonResponse({'errores_validacion': errors}, status=400)
+            else:
+                # Si no es una solicitud AJAX, enviar los errores al formulario de nuevo
                 messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
-                return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
+                return render(request, 'html/fichaNavio.html', {'form': form})
 
     elif request.method == 'GET':
-        # Manejar solicitudes GET aquí, si es necesario
-        return render(request, 'html/fichaNavio.html')
+        # Si es una solicitud GET, simplemente mostrar el formulario vacío
+        form = FichaNavioForm()
+        return render(request, 'html/fichaNavio.html', {'form': form})
 
     else:
-        return JsonResponse({'mensaje': 'Método no permitido'}, status=405)
+        # Si se recibe un método HTTP diferente a GET o POST, loggear el error y redirigir
+        logger.error(f"Método HTTP no permitido: {request.method}")
+        return redirect('erp:gestor-operaciones')
     
-def descargar_excel(request):
+def descargar_excel(request, ficha_id):
     # Obtener datos de la base de datos
-    fichas = FichaNavio.objects.all()
+    fichas = FichaNavio.objects.filter(id=ficha_id)
 
     # Crear un nuevo libro de trabajo y una hoja de cálculo
     wb = openpyxl.Workbook()
@@ -197,11 +209,11 @@ def descargar_excel(request):
         ws[f"Q{row_num}"] = ficha.horaRegistroPCR.strftime('%H:%M') if ficha.horaRegistroPCR else None
         ws[f"R{row_num}"] = ficha.fecha_creacion.strftime('%d-%m-%Y %H:%M:%S')
         ws[f"S{row_num}"] = ficha.cantidadPersonas
-        ws[f"T{row_num}"] = ficha.puerto
+        ws[f"T{row_num}"] = ficha.CantidadPuerto
 
     # Crear una respuesta de archivo Excel
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=fichas_navio.xlsx'
+    response['Content-Disposition'] = f'attachment; filename=ficha_navio_{ficha.id}.xlsx'
     wb.save(response)
 
     return response
@@ -225,49 +237,492 @@ def gestorPersonal(request):
             return redirect('erp:gestor-personal')
         else:
             messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+
     else:
         form = FichaPersonalForm()
 
     return render(request, 'html/gestorPersonal.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
 
+def obtener_color_para_estadoPersonal(estado):
+    colores_por_estado = {
+        'Disponible': '#00FF00',  # Verde
+        'En Operacion': '#FFFF00',  # Amarillo
+        'No Disponible': '#FF0000',  # Rojo
+    }
+
+    # Devuelve el color asociado al estado, o blanco por defecto
+    return colores_por_estadoPersonal.get(estado, '#FF0000')
+
 @login_required
 def nueva_fichaPersonal(request):
+    errors = {}
+
     if request.method == 'POST':
         form = FichaPersonalForm(request.POST)
 
-        form.fields.pop('Estado', None)
-        form.fields.pop('color', None) 
-
         if form.is_valid():
             ficha = form.save(commit=False)
-
-            # Establecer valores predeterminados para 'Estado' y 'color'
-            ficha.Estado = 'No Iniciado' 
-            ficha.color = obtener_color_para_estado(ficha.Estado)
-
-            # Establecer valores en la instancia del formulario
+            ficha.Estado = 'No Iniciado'
+            ficha.color = obtener_color_para_estadoPersonal(ficha.Estado)
             form.instance.Estado = ficha.Estado
             form.instance.color = ficha.color
-
             form.save()
+
             messages.success(request, 'Ficha de Personal guardada exitosamente.')
+
+            # Devuelve una respuesta JSON con la URL a la que se redirigirá
+            return JsonResponse({'redireccionar_a': reverse('erp:gestor-personal')})
+        else:
+            errors = form.errors.as_json()
+
+    # Devuelve una respuesta JSON con los errores si el formulario no es válido
+    return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
+
+#----------Inventario
+@login_required
+def inventario(request):
+    nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+    return render(request, 'html/MenuInventario.html', {'nombre_usuario': nombre_usuario})
+
+#-------Herramientas
+@login_required
+def gestorHerramientas(request):
+    fichas = FichaHerramientas.objects.all()
+    for ficha in fichas:
+        print(f"Ficha: {ficha}, Fecha de Ingreso: {ficha.fecha_ingreso}")
+
+    nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+    if request.method == 'POST':
+        form = FichaVehiculoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ficha de herramientas guardada exitosamente.')
+            return redirect('erp:gestor-herramientas')  # Redirige a la página 'gestor-quimico'
+        else:
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+    else:
+        form = FichaVehiculoForm()
+
+    return render(request, 'html/gestorHerramientas.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+@login_required
+def nuevaFichaHerramientas(request):
+    if request.method == 'POST':
+        form = FichaHerramientasForm(request.POST)
+        if form.is_valid():
+            ficha = form.save(commit=False)
+            ficha.fechaIngreso = timezone.now().date()
+            print("Valores del formulario antes de guardar:", form.cleaned_data)
+
+            ficha.save()
+
+            messages.success(request, 'Ficha de herramientas guardada exitosamente.')
+
             print(f"Ficha guardada: {ficha}")
 
             # Redirige directamente desde Django
-            return JsonResponse({'redireccionar_a': reverse('erp:gestor-personal')})
+            return redirect('erp:gestor-herramientas')  # Redirige a la página 'gestor-quimico'
         else:
-            # Manejar el caso en que 'color' no está en el formulario
-            if 'color' not in form.fields:
-                messages.error(request, 'Error en el formulario. El campo "color" no está presente.')
-            else:
-                errors = form.errors.as_json()  # Obtener errores de validación como JSON
-                print(errors)
-                messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
-                return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
-
-    elif request.method == 'GET':
-        # Manejar solicitudes GET aquí, si es necesario
-        return render(request, 'html/fichaPersonal.html')
-
+            print("Errores de validación del formulario:", form.errors)
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
     else:
-        return JsonResponse({'mensaje': 'Método no permitido'}, status=405)
+        form = FichaVehiculoForm()
+
+    return render(request, 'html/fichaHerramienta.html', {'form': form})
+def descargar_excelHerramientas(request):
+    # Obtener datos de la base de datos
+    fichas = FichaHerramientas.objects.all()
+
+    # Crear un nuevo libro de trabajo y una hoja de cálculo
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    # Agregar encabezados a la primera fila
+    headers = ["marca", "fecha_ingreso", "modelo", "cantidad_herramientas", "tipo_herramienta"]
+
+    for col_num, header in enumerate(headers, 1):
+        col_letter = get_column_letter(col_num)
+        ws[f"{col_letter}1"] = header
+        ws[f"{col_letter}1"].font = Font(bold=True)
+
+    # Agregar datos a las filas siguientes
+    for row_num, ficha in enumerate(fichas, 2):
+        ws[f"A{row_num}"] = ficha.marca
+        ws[f"B{row_num}"] = ficha.fecha_ingreso
+        ws[f"C{row_num}"] = ficha.modelo
+        ws[f"D{row_num}"] = ficha.cantidad_herramientas
+        ws[f"E{row_num}"] = ficha.tipo_herramienta
+
+    # Crear una respuesta de archivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=fichas_herramientas.xlsx'
+    wb.save(response)
+
+    return response
+
+def eliminar_fichaHerramientas(request, ficha_id):
+    ficha = get_object_or_404(FichaHerramientas, id=ficha_id)
+    ficha.delete()
+    messages.success(request, 'Ficha de herramientas eliminada exitosamente.')
+    return redirect('erp:gestor-herramientas')
+
+#-------------Quimicos
+def gestorQuimico(request):  
+    fichas = FichaQuimico.objects.all()
+    for ficha in fichas:
+        print(f"Ficha: {ficha}, Fecha de Registro: {ficha.fecha_registro}")
+
+    nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+    if request.method == 'POST':
+        form = FichaQuimicoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ficha de Quimicos guardada exitosamente.')
+            return redirect('erp:gestor-operaciones')
+        else:
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+    else:
+        form = FichaQuimicoForm()
+
+    return render(request, 'html/gestorQuimico.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+@login_required
+def nuevaFichaQuimico(request):
+    if request.method == 'POST':
+        form = FichaQuimicoForm(request.POST)
+        if form.is_valid():
+            ficha = form.save(commit=False)
+            ficha.fecha_registro = timezone.now().date()
+            print("Valores del formulario antes de guardar:", form.cleaned_data)
+
+            ficha.save()
+
+            messages.success(request, 'Ficha de Quimico guardada exitosamente.')
+
+            print(f"Ficha guardada: {ficha}")
+
+            # Redirige directamente desde Django
+            return redirect('erp:gestor-quimico')  # Redirige a la página 'gestor-quimico'
+        else:
+            print("Errores de validación del formulario:", form.errors)
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+    else:
+        form = FichaQuimicoForm()
+
+    return render(request, 'html/fichaQuimico.html', {'form': form})
+
+def eliminar_fichaQuimico(request, ficha_id):
+    ficha = get_object_or_404(FichaQuimico, id=ficha_id)
+    ficha.delete()
+    messages.success(request, 'Ficha de quimico eliminada exitosamente.')
+    return redirect('erp:gestor-quimico')
+
+def descargar_excelQuimico(request):
+    # Obtener datos de la base de datos
+    fichas = FichaQuimico.objects.all()
+
+    # Crear un nuevo libro de trabajo y una hoja de cálculo
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    # Agregar encabezados a la primera fila
+    headers = ["tipo_quimico", "fecha_registro", "capacidad_bines", "lugar_almacenamiento"]
+
+    for col_num, header in enumerate(headers, 1):
+        col_letter = get_column_letter(col_num)
+        ws[f"{col_letter}1"] = header
+        ws[f"{col_letter}1"].font = Font(bold=True)
+
+    # Agregar datos a las filas siguientes
+    for row_num, ficha in enumerate(fichas, 2):
+        ws[f"A{row_num}"] = ficha.tipo_quimico
+        ws[f"B{row_num}"] = ficha.fecha_registro
+        ws[f"C{row_num}"] = ficha.capacidad_bines
+        ws[f"D{row_num}"] = ficha.lugar_almacenamiento
+
+    # Crear una respuesta de archivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=fichas_quimica.xlsx'
+    wb.save(response)
+
+    return response
+
+#-----Vehiculo
+
+def gestorVehiculo(request):
+  fichas = FichaVehiculo.objects.all()
+  for ficha in fichas:
+      print(f"Ficha: {ficha}, Fecha de Ingreso: {ficha.fecha_ingreso}")
+
+  nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+  if request.method == 'POST':
+      form = FichaVehiculoForm(request.POST)
+      if form.is_valid():
+          form.save()
+          messages.success(request, 'Ficha de Vehículo guardada exitosamente.')
+          return redirect('erp:gestor-vehiculo')  # Redirige a la página 'gestor-quimico'
+      else:
+          messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+  else:
+      form = FichaVehiculoForm()
+
+  return render(request, 'html/gestorVehiculo.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+@login_required
+def nuevaFichaVehiculo(request):
+  if request.method == 'POST':
+      form = FichaVehiculoForm(request.POST)
+      if form.is_valid():
+          ficha = form.save(commit=False)
+          ficha.fecha_ingreso = timezone.now().date()
+          print("Valores del formulario antes de guardar:", form.cleaned_data)
+
+          ficha.save()
+
+          messages.success(request, 'Ficha de Vehiculo guardada exitosamente.')
+
+          print(f"Ficha guardada: {ficha}")
+
+          # Redirige directamente desde Django
+          return redirect('erp:gestor-vehiculo')  # Redirige a la página 'gestor-quimico'
+      else:
+          print("Errores de validación del formulario:", form.errors)
+          messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+  else:
+      form = FichaVehiculoForm()
+
+  return render(request, 'html/fichaVehiculos.html', {'form': form})
+
+def eliminar_fichaVehiculo(request, ficha_id):
+  ficha = get_object_or_404(FichaVehiculo, id=ficha_id)
+  ficha.delete()
+  messages.success(request, 'Ficha de vehiculo eliminada exitosamente.')
+  return redirect('erp:gestor-vehiculo')
+
+def descargar_excelVehiculo(request):
+  # Obtener datos de la base de datos
+  fichas = FichaVehiculo.objects.all()
+
+  # Crear un nuevo libro de trabajo y una hoja de cálculo
+  wb = openpyxl.Workbook()
+  ws = wb.active
+
+  # Agregar encabezados a la primera fila
+  headers = ["marca", "modelo", "patente", "fecha_ingreso", "chasis", "tipo_vehiculo", "tipo_combustible"]
+
+  for col_num, header in enumerate(headers, 1):
+      col_letter = get_column_letter(col_num)
+      ws[f"{col_letter}1"] = header
+      ws[f"{col_letter}1"].font = Font(bold=True)
+
+  # Agregar datos a las filas siguientes
+  for row_num, ficha in enumerate(fichas, 2):
+      ws[f"A{row_num}"] = ficha.marca
+      ws[f"B{row_num}"] = ficha.modelo
+      ws[f"C{row_num}"] = ficha.patente
+      ws[f"D{row_num}"] = ficha.fecha_ingreso
+      ws[f"E{row_num}"] = ficha.chasis
+      ws[f"F{row_num}"] = ficha.tipo_vehiculo
+      ws[f"G{row_num}"] = ficha.tipo_combustible
+
+  # Crear una respuesta de archivo Excel
+  response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  response['Content-Disposition'] = 'attachment; filename=fichas_vehiculos.xlsx'
+  wb.save(response)
+
+  return response
+
+#-------Herramientas
+
+@login_required
+def gestorHerramientas(request):
+    fichas = FichaHerramientas.objects.all()
+    for ficha in fichas:
+        print(f"Ficha: {ficha}, Fecha de Ingreso: {ficha.fecha_ingreso}")
+
+    nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+    if request.method == 'POST':
+        form = FichaVehiculoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ficha de herramientas guardada exitosamente.')
+            return redirect('erp:gestor-herramientas')  # Redirige a la página 'gestor-quimico'
+        else:
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+    else:
+        form = FichaVehiculoForm()
+
+    return render(request, 'html/gestorHerramientas.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+@login_required
+def nuevaFichaHerramientas(request):
+    if request.method == 'POST':
+        form = FichaHerramientasForm(request.POST)
+        if form.is_valid():
+            ficha = form.save(commit=False)
+            ficha.fechaIngreso = timezone.now().date()
+            print("Valores del formulario antes de guardar:", form.cleaned_data)
+
+            ficha.save()
+
+            messages.success(request, 'Ficha de herramientas guardada exitosamente.')
+
+            print(f"Ficha guardada: {ficha}")
+
+            # Redirige directamente desde Django
+            return redirect('erp:gestor-herramientas')  # Redirige a la página 'gestor-quimico'
+        else:
+            print("Errores de validación del formulario:", form.errors)
+            messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+    else:
+        form = FichaVehiculoForm()
+
+    return render(request, 'html/fichaHerramientas.html', {'form': form})
+def descargar_excelHerramientas(request):
+    # Obtener datos de la base de datos
+    fichas = FichaHerramientas.objects.all()
+
+    # Crear un nuevo libro de trabajo y una hoja de cálculo
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    # Agregar encabezados a la primera fila
+    headers = ["marca", "fecha_ingreso", "modelo", "cantidad_herramientas", "tipo_herramienta"]
+
+    for col_num, header in enumerate(headers, 1):
+        col_letter = get_column_letter(col_num)
+        ws[f"{col_letter}1"] = header
+        ws[f"{col_letter}1"].font = Font(bold=True)
+
+    # Agregar datos a las filas siguientes
+    for row_num, ficha in enumerate(fichas, 2):
+        ws[f"A{row_num}"] = ficha.marca
+        ws[f"B{row_num}"] = ficha.fecha_ingreso
+        ws[f"C{row_num}"] = ficha.modelo
+        ws[f"D{row_num}"] = ficha.cantidad_herramientas
+        ws[f"E{row_num}"] = ficha.tipo_herramienta
+
+    # Crear una respuesta de archivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=fichas_herramientas.xlsx'
+    wb.save(response)
+
+    return response
+
+def eliminar_fichaHerramientas(request, ficha_id):
+    ficha = get_object_or_404(FichaHerramientas, id=ficha_id)
+    ficha.delete()
+    messages.success(request, 'Ficha de herramientas eliminada exitosamente.')
+    return redirect('erp:gestor-herramientas')
+
+
+def gestorMantenimiento(request):
+  fichas = FichaMantenimiento.objects.all()
+  for ficha in fichas:
+      print(f"Ficha: {ficha}, Fecha de Ingreso: {ficha.fecha_ingreso}")
+
+  nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+  if request.method == 'POST':
+      form = FichaMantenimientoForm(request.POST)
+      if form.is_valid():
+          form.save()
+          messages.success(request, 'Ficha de Mantenimiento guardada exitosamente.')
+          return redirect('erp:mantenimiento')  # Redirige a la página 'Mantenimiento'
+      else:
+          messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+  else:
+      form = FichaMantenimientoForm()
+
+  return render(request, 'html/Mantenimiento.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+#---------------------Mantenimiento
+
+def gestorMantenimiento(request):
+  fichas = FichaMantenimiento.objects.all()
+  for ficha in fichas:
+      print(f"Ficha: {ficha}, Fecha de Ingreso: {ficha.fecha_ingreso}")
+
+  nombre_usuario = request.user.nombre if request.user.is_authenticated else "Invitado"
+
+  if request.method == 'POST':
+      form = FichaMantenimientoForm(request.POST)
+      if form.is_valid():
+          form.save()
+          messages.success(request, 'Ficha de Mantenimiento guardada exitosamente.')
+          return redirect('erp:GestorMantenimiento')  # Redirige a la página 'Mantenimiento'
+      else:
+          messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+  else:
+      form = FichaMantenimientoForm()
+
+  return render(request, 'html/GestorMantenimiento.html', {'form': form, 'fichas': fichas, 'nombre_usuario': nombre_usuario})
+
+@login_required
+def nuevaFichaMantenimiento(request):
+  if request.method == 'POST':
+      form = nuevaFichaMantenimientoForm(request.POST)
+      if form.is_valid():
+          ficha = form.save(commit=False)
+          ficha.fecha_ingreso = timezone.now().date()
+          print("Valores del formulario antes de guardar:", form.cleaned_data)
+
+          ficha.save()
+
+          messages.success(request, 'Ficha de Mantenimiento guardada exitosamente.')
+
+          print(f"Ficha guardada: {ficha}")
+
+          # Redirige directamente desde Django
+          return redirect('erp:nuevaFichaMantenimiento')  # Redirige a la página 'Mantenimiento'
+      else:
+          print("Errores de validación del formulario:", form.errors)
+          messages.error(request, 'Error en el formulario. Por favor, verifica los datos.')
+  else:
+      form = FichaMantenimientoForm()
+
+  return render(request, 'html/FichaMantenimiento.html', {'form': form})
+
+def eliminar_fichaMantenimiento(request, ficha_id):
+  ficha = get_object_or_404(FichaMantenimiento, id=ficha_id)
+  ficha.delete()
+  messages.success(request, 'Ficha de Mantenimiento eliminada exitosamente.')
+  return redirect('erp:nuevaFichaMantenimiento')
+
+def descargar_excelMantenimiento(request):
+  # Obtener datos de la base de datos
+  fichas = FichaMantenimiento.objects.all()
+
+  # Crear un nuevo libro de trabajo y una hoja de cálculo
+  wb = openpyxl.Workbook()
+  ws = wb.active
+
+  # Agregar encabezados a la primera fila
+  headers = ["categoria", "accion", "estado"]
+
+  for col_num, header in enumerate(headers, 1):
+      col_letter = get_column_letter(col_num)
+      ws[f"{col_letter}1"] = header
+      ws[f"{col_letter}1"].font = Font(bold=True)
+
+  # Agregar datos a las filas siguientes
+  for row_num, ficha in enumerate(fichas, 2):
+      ws[f"A{row_num}"] = ficha.categoria
+      ws[f"B{row_num}"] = ficha.accion
+      ws[f"C{row_num}"] = ficha.estado
+
+  # Crear una respuesta de archivo Excel
+  response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  response['Content-Disposition'] = 'attachment; filename=Mantenimiento.xlsx'
+  wb.save(response)
+
+  return response
+
+#---------------------Documentos
+
+def gestor_documentos(request):
+    return render(request, 'html/gestorDocumentos.html')

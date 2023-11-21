@@ -1,0 +1,56 @@
+{% extends 'html/base.html' %}
+
+{% block title %}
+  Ficha de Herramientas
+{% endblock %}
+
+{% block module_styles %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesherramientas.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesBase.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="section">
+    <h1 style="color: white; font-weight: bold; margin: 20px;">Ficha de Herramienta</h1>
+    <div class="imagen-container">
+        <img src="{% static 'images/lineaRoja.png' %}" alt="Barra Roja">
+    </div>
+    <!-- Formulario -->
+    <div class="section" style="color:white; margin: 20px;">
+        <form action="" method="post">
+          {% csrf_token %}
+            <h3>Marca de Herramienta</h3>
+            <input style="margin-bottom: 20px;" type="text" name="marca" class="textbox" placeholder="Marca de Herramienta" required>
+
+            <h3>Fecha de Compra de Herramienta</h3>
+            <input style="margin-bottom: 20px;" type="date" name="fecha_ingreso" class="textbox" id="fechaIngresoHerramienta" required>
+
+            <h3>Modelo de la Herramienta</h3>
+            <input style="margin-bottom: 20px;" type="text" name="modelo" class="textbox" placeholder="Modelo de Herramienta" required>
+
+            <h3>Cantidad de Herramientas</h3>
+            <input style="margin-bottom: 20px;" type="number" name="cantidad_herramientas" class="textbox" placeholder="Cantidad de Herramientas" required>
+
+            <h3>Tipo de Herramienta</h3>
+            <select style="margin-bottom: 20px;" name="tipo_herramienta" class="textbox" id="TipoHerramienta" required>
+                <option value="Manual">Manual</option>
+                <option value="Mecanico">Mecanico</option>
+            </select>
+
+            <br><br>
+            <button class="btn btn-personalizado" style="background-color: #a30000;border-radius: 10px; margin: 5px;" type="submit">Guardar Ficha</button>
+            <button class="btn btn-secondary" type="button" onclick="goBack()" style="margin: 20px;">Volver</button>
+            <script>
+            function goBack() {
+              window.history.back()
+            }
+            </script>
+        </form>
+    </div>
+  </div>
+{% endblock %}
+{% block module_scripts %}
+    <!-- Scripts específicos de la página de menú -->
+    <script src="{% static 'js/scriptHerramientasValidacion.js' %}"></script>
+{% endblock %}

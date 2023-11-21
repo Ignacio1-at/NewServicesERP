@@ -1,0 +1,73 @@
+{% extends 'html/base.html' %}
+
+{% block title %}
+  Ficha de Registro de Quimicos
+{% endblock %}
+
+{% block module_styles %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesquimicos.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesBase.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <h1 style="color: white; font-weight: bold; margin: 20px;">Ficha de Registro de Quimicos</h1>
+  <div class="imagen-container">
+    <img src="{% static 'images/lineaRoja.png' %}" alt="Linea Roja" />
+  </div>
+  <div class="section" style="color: white; margin: 20px;">
+        <h3>Categoria de Quimicos</h3>
+        <div class="imagen-container">
+            <img src="{% static 'images/lineaRoja.png' %}">
+        </div>
+        <!-- Formulario -->
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="section">
+                <!-- Selector desplegable para Entrada, salida, inventario -->
+                <select class="textbox" id="tipo_quimico" name="tipo_quimico" style="margin : 10px;">
+                    <option value="" selected disabled>Seleccione un Quimico</option>
+                    <option value="OCN 01">OCN 01</option>
+                    <option value="OCN 08">OCN 08</option>
+                    <option value="Acido Clorhídrico">Acido Clorhídrico</option>
+                    <option value="Hipoclorito">Hipoclorito</option>
+                    <option value="Hold Coat">Hold Coat</option>
+                </select>
+            </div>
+
+            <div class="section">
+                <h3>Fecha de Registro</h3>
+                <!-- Calendario para Fecha Ingreso/Egreso -->
+                <input type="date" class="textbox" id="fecha_registro" name="fecha_registro">
+            </div>
+
+            <h3>Registre capasidad de los Bines</h3>
+            <!-- Selector desplegable para Stock Bines-->
+            <select class="textbox" id="capacidad_bines" name="capacidad_bines">
+                <option value="" selected disabled>Seleccione capasidad de bines</option>
+                <option value="Lleno">Lleno (1000 lts) aprox</option>
+                <option value="Medio">Medio (500 lts) aprox</option>
+            </select>
+
+            <h3>Registre lugar de almacenamiento</h3>
+            <!-- Selector desplegable para Stock Bines-->
+            <select class="textbox" id="lugar_almacenamiento" name="lugar_almacenamiento">
+                <option value="" selected disabled>Seleccione lugar</option>
+                <option value="Taller">Taller</option>
+                <option value="Container">Container</option>
+            </select>
+
+            <h3></h3>
+            <button class="btn btn-personalizado" style="background-color: #a30000;border-radius: 10px; margin: 5px;" type="submit">Guardar Ficha</button>
+            <button class="btn btn-secondary" type="button" onclick="goBack()" style="margin: 20px;">Volver</button>
+            <script>
+            function goBack() {
+              window.history.back()
+            }
+            </script>
+        </form>
+
+        <script src="{% static 'js/scriptvalidacionregistroquimicos.js' %}"></script>
+    </div>
+
+{% endblock %}

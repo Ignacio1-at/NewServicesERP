@@ -37,7 +37,7 @@
           <div class="row gy-5">
             <div class="col-md-6 col-lg-6">
               <div class="p-3 Botones">
-                <button class="BotonMantenimiento" onclick="accionBoton()">
+                <button class="BotonMantenimiento" onclick="window.location.href='{% url 'erp:GestorMantenimiento' %}'">
                   <img src="{% static 'images/Mantenimiento.png' %}" alt="Texto alternativo de la imagen" />
                   <br />
                   Mantenimiento
@@ -46,7 +46,7 @@
             </div>
             <div class="col-md-6 col-lg-6">
               <div class="p-3 Botones">
-                <button class="BotonOtro" onclick="accionBoton()">
+                <button class="BotonOtro" onclick="window.location.href='{% url 'erp:gestor_documentos' %}'">
                   <img src="{% static 'images/Informe.png' %}" alt="Texto alternativo de la imagen" />
                   <br />
                   Documentos
@@ -60,7 +60,7 @@
           <div class="row gy-5">
             <div class="col-md-6 col-lg-6">
               <div class="p-3 Botones">
-                <button class="BotonOtro" onclick="accionBoton()">
+                <button class="BotonOtro" onclick="window.location.href='{% url 'erp:inventario' %}'">
                   <img src="{% static 'images/Inventario.png' %}" alt="Texto alternativo de la imagen" />
                   <br />
                   Inventario

@@ -1,0 +1,71 @@
+{% extends 'html/base.html' %}
+
+{% block title %}
+  Mantenimiento
+{% endblock %}
+
+{% block module_styles %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesMantenimiento.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesBase.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container ">
+      <div class="row ">
+        <div class="row">
+          <div class="col-md-3" style="margin-left: 0.9%;width: 25%;">
+            <img src="{% static 'images/IconoAuto.png' %}" alt="Texto alternativo de la imagen" class="mb-2" width="10%">
+            <span style="color: white;">Mantenimiento</span>
+          </div>
+          <div class="col-md-9" style="width: auto;">
+            <input class="bg-personalizado rounded-pill" type="text" id="Buscar" placeholder="   Buscar" style="color: #ffffff; background-color: #01152a; border: none;">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container px-4">
+      <div class="row">
+        <div class="col-md-3" style="width: 25%;">
+          <button type="button" class="btn btn-personalizado" style="background-color: #a30000;" onclick="window.location.href='{% url 'erp:ficha-Mantenimiento' %}'">+ Agregar Elemento</button>
+          <div></div>
+          <a class="btn btn-secondary" href="{% url 'erp:mantenimiento' %}" style="margin-top: 5%;">Volver</a>
+        </div>
+        <div class="col-md-9" style="width: 75%;">
+          <div class="p-3" style="width: 100%; height: 80vh; background-color: #01152a; border-radius: 10px;">
+            <div class="d-flex flex-column h-50 w-100">
+            <div class="card-body flex-grow-1" style="color: white;">
+              <table class="table " style="color: white; width: 100%;">	
+              <thead class="">
+                <tr>
+                <th>Categoria</th>
+                <th>Accion</th>
+                <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody class="tabla-filas">
+                {% for ficha in fichas %}
+                  <tr data-correo="{{ ficha.id }}" class="tabla-filas">
+                  <td>{{ ficha.Categoria }}</td>
+                  <td>{{ ficha.Accion }}</td>
+                  <td>{{ ficha.Estado}}</td>									
+                  <td>
+                    <a href="{% url 'erp:descargar-excelMantenimiento' %}" target="_blank">Descargar</a>
+                    <a href="{% url 'erp:eliminar-FichaMantenimiento' ficha.id %}" onclick="return confirm('¿Estás seguro de eliminar esta ficha?')">Eliminar</a>
+                  </td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+  {% block module_scripts %}
+  <!-- Scripts específicos de la página de menú -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="{% static 'js/scriptGestorMantenimiento.js' %}"></script>
+{% endblock %}

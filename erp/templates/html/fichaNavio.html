@@ -11,12 +11,12 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Ficha de Motonaves</h1>
-  <div class="imagen-container">
+  <h1 style="color: white; font-weight: bold; margin: 20px;">Ficha de Motonaves</h1>
+  <div class="imagen-container" style="margin: 20px;">
     <img src="{% static 'images/lineaRoja.png' %}" alt="Linea Roja" />
   </div>
 
-  <div class="section">
+  <div class="section" style="overflow-y: auto; max-height: 720px; margin: 20px;">
     <form id="fichaNavioForm" method="post" action="{% url 'erp:nueva_ficha' %}">
       {% csrf_token %}
       <input type="text" class="textbox" name="Nave" placeholder="Nave" />
@@ -74,9 +74,7 @@
         <input type="time" class="textbox" name="horaRegistroPCR" />
       </div>
 
-      <script src="{% static 'js/scriptNavio.js' %}"></script>
-
-      <h1>Navegación</h1>
+      <h1 style="color: white; margin: 10px;">Navegación</h1>
       <div class="seccion">
         <div class="rectangulo">
           <label for="cantidadPersonas">Cantidad de Personas:</label>
@@ -85,14 +83,19 @@
         </div>
 
         <div class="rectangulo">
-          <label for="puerto">Puerto:</label>
-          <input type="number" class="textbox" name="puerto" />
-          <span>Personas</span>
+          <label for="CantidadPuerto" style="color: white;">Puerto:</label>
+          <input type="number" class="textbox" name="CantidadPuerto" />
         </div>
       </div>
 
       <h3></h3>
-      <button type="submit">Guardar Ficha</button>
+      <button class="btn btn-personalizado" style="background-color: #a30000;border-radius: 10px; margin: 5px;" type="submit">Guardar Ficha</button>
+      <button class="btn btn-secondary" type="button" onclick="goBack()" style="margin: 20px;">Volver</button>
+      <script>
+        function goBack() {
+          window.history.back()
+        }
+      </script>
     </form>
   </div>
   <script>
@@ -100,12 +103,6 @@
     var nuevaFichaURL = '{% url "erp:nueva_ficha" %}'
   </script>
   <!-- Retroceder -->
-  <button type="button" onclick="goBack()">Volver</button>
-  <script>
-    function goBack() {
-      window.history.back()
-    }
-  </script>
 {% endblock %}
 
 {% block module_scripts %}

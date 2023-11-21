@@ -1,0 +1,61 @@
+body {
+    background-image: url('Fondo.png');
+    background-size: cover; 
+    background-repeat: repeat; 
+    font-family: Arial, sans-serif;
+    background-color: black; 
+    color: white; 
+    padding: 20px; 
+}
+.section {
+    margin: 20px 0;
+}
+
+.textbox {
+    width: 300px; 
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px; 
+    background-color: #01152a; 
+    color: white; 
+    
+}
+.date-input {
+    width: 150px; 
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px; 
+    background-color: #01152a; 
+    color: white; 
+}
+
+.imagen-container {
+    text-align: center; 
+    margin: 20px 0; 
+    position: relative; 
+    max-width: 40%; 
+}
+
+.imagen-container img {
+    width: 100%;
+    height: auto; 
+    display: block; 
+}
+
+#GuardarFicha {
+    background-color: #01152a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#GuardarFicha {
+    background-color: #01152a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

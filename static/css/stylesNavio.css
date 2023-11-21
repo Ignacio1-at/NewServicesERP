@@ -1,14 +1,9 @@
-body {
-    background-image: url(../images/Fondonew.png); /* Reemplaza 'nombre_de_la_imagen.jpg' con la ruta de tu imagen de fondo */
-    background-size: cover; /* Establece la altura del contenedor al 100% de la altura de la ventana (viewport height) */
-    background-repeat: repeat; /* Evita que la imagen se repita */
-    font-family: Arial, sans-serif;
-    background-color: black; /* Cambia el color de fondo del cuerpo a negro */
-    color: white; /* Cambia el color del texto a blanco */
-    padding: 20px; /* Añade espacio en los bordes del cuerpo */
+label{
+    color: white;
 }
-.section {
-    margin: 20px 0;
+
+span{
+    color: #ffffff;
 }
 
 .textbox {

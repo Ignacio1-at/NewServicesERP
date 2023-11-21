@@ -1,0 +1,32 @@
+.btn-personalizado {
+  background-color: 01152a;
+  color: white !important;
+  border: none;
+}
+
+.container-md px-4 d-flex justify-content-center align-items-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.texto-invisible {
+  color: white;
+  font-size: 24px;
+}
+
+.texto-blanco {
+  color: white;
+}
+
+#Buscar {
+  color: white;
+}
+
+::placeholder {
+  color: white;
+}
+
+h3{
+  color: white;
+}

@@ -1,0 +1,68 @@
+{% extends 'html/base.html' %}
+
+{% block title %}
+  Inventario
+{% endblock %}
+
+{% block module_styles %}
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styleMenuInventario.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/stylesBase.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-12">
+          <h1 style="color: white; font-weight: bold; margin: 20px;">Inventario</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <img src="{% static 'images/lineaRoja.png' %}" alt="Divisor">
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" type="button" onclick="goBack()" style="margin: 20px;">Volver</button>
+      <script>
+        function goBack() {
+          window.history.back()
+        }
+      </script>
+
+      <div class="row" style="margin-top: 10%; margin-left: 22%;">
+        <div class="col-md-12">
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <div class="p-3 Botones">
+                <button class="Botones" onclick="window.location.href='{% url 'erp:gestor-vehiculo' %}'">
+                <img src="{% static 'images/IconoAuto.png' %}" alt="Auto">
+                <span>Vehiculos</span>
+              </button>
+            </div>
+            <div class="p-3 Botones">
+              <button class="Botones" onclick="window.location.href='{% url 'erp:gestor-quimico' %}'">
+                <img src="{% static 'images\IconoQuimico.png' %}" alt="Quimico">
+                <span>Quimicos</span>
+              </button>
+            </div>
+            <div class="p-3 Botones">
+                <button class="Botones" onclick="window.location.href='{% url 'erp:gestor-herramientas' %}';">
+                <img src="{% static 'images\IconoHerramientas.png' %}" alt="Herramientas">
+                <span>Herramientas</span>
+              </button>
+            </div>
+            <div class="p-3 Botones">
+                <!--<button class="Botones" onclick="window.location.href='GestorOtro.html';">
+                <img src="{% static 'images\IconoOtro.png' %}" alt="Otros">
+                <span>Otros</span>
+              </button>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

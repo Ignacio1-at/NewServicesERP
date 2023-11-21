@@ -11,231 +11,219 @@
 {% endblock %}
 
 {% block content %}
-<form id="" method="post" action="{% url 'erp:nueva_fichaPersonal' %}">
-
-    <h1>Ficha de Ingreso del Personal</h1>
-    <div class="imagen-container">
-        <img src="{% static 'images/lineaRoja.png' %}">
+  {% if errores_validacion %}
+    <div class="error-message">
+      <p>Error en el formulario. Por favor, verifica los datos:</p>
+      <ul>
+        {% for field, errors in errores_validacion.items %}
+          <li>
+            {{ field }}:{% for error in errors %}
+              {{ error }}
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
     </div>
+  {% endif %}
 
-    <div class="section">
-            <input type="text" class="textbox" id="apellidoPaterno" placeholder="Apellido Paterno">
-            <input type="text" class="textbox" placeholder="Apellido Materno">
-            <input type="text" class="textbox" placeholder="Nombres">
-            <input type="text" class="textbox" placeholder="Rut">
+  <div id="form-container">
+    <form id="fichaPersonalForm" method="post" data-url="{% url 'erp:nueva_fichaPersonal' %}">
+      {% csrf_token %}
+      <h1 style="color: white; font-weight: bold; margin-bottom: 20px;">Ficha de Ingreso del Personal</h1>
+      <div class="imagen-container">
+        <img src="{% static 'images/lineaRoja.png' %}" />
+      </div>
 
-            <!-- Selector desplegable para Estado Civil -->
-            <select class="textbox" id="estadoCivil">
-                <option value="estadoCivil">Selecciona Estado Civil</option>
-                <option value="Soltero">Soltero</option>
-                <option value="Casado">Casado</option>
-                <option value="Viudo">Viudo</option>
-            </select>
+      <div class="section">
+        <input type="text" class="textbox" name="apellido_paterno" id="apellidoPaterno" placeholder="Apellido Paterno" />
+        <input type="text" class="textbox" name="apellido_Materno" id="apellidoMaterno" placeholder="Apellido Materno" />
+        <input type="text" class="textbox" name="Nombres" id="nombres" placeholder="Nombres" />
+        <input type="text" class="textbox" name="Rut" id="rut" placeholder="Rut" />
 
-            <input type="text" class="textbox" placeholder="Nacionalidad">
-            <input type="text" class="textbox" placeholder="Dirección">
-            <input type="text" class="textbox" placeholder="Comuna">
-            <input type="text" class="textbox" placeholder="Correo Electrónico">
-            <input type="text" class="textbox" placeholder="Celular">
-
-            <!-- Calendario para Fecha de Nacimiento -->
-            <input type="date" class="textbox" id="fechaNacimiento">
-    </div>
-
-    <div class="section">
-        <h2>Antecedentes Previsionales</h2>
-    <div class="subCasoEmergencia">
-        <img src="{% static 'images/lineaRoja.png' %}">
-    </div>
-    <input type="text" class="textbox" placeholder="AFP">
-    <input type="text" class="textbox" placeholder="Salud">
-    <input type="text" class="textbox" placeholder="Otros">
-</div>
-    </div>
-
-    <div class="section">
-        <h2>Antecedentes Bancarios</h2>
-        <div class="subrayadoAntecedentes">
-            <img src="{% static 'images/lineaRoja.png' %}">
-        </div>
-        <input type="text" class="textbox" placeholder="Tipo de Cuenta">
-        <input type="text" class="textbox" placeholder="Nº de Cuenta">
-        <!-- Selector desplegable para Banco -->
-        <select class="textbox" id="banco">
-            <option value="">Selecciona Banco</option>
-            <option value="BCI">BCI</option>
-            <option value="Banco Estado">Banco Estado</option>
+        <!-- Selector desplegable para Estado Civil -->
+        <select class="textbox" name="estado_Civil" id="estadoCivil">
+          <option value="estadoCivil">Selecciona Estado Civil</option>
+          <option value="Soltero">Soltero</option>
+          <option value="Casado">Casado</option>
+          <option value="Viudo">Viudo</option>
         </select>
-    </div>
 
-    <div class="section">
-        <h2>Contacto en Caso de Emergencia</h2>
+        <input type="text" class="textbox" name="Nacionalidad" id="nacionalidad" placeholder="Nacionalidad" />
+        <input type="text" class="textbox" name="Dirección" id="direccion" placeholder="Dirección" />
+        <input type="text" class="textbox" name="Comuna" id="comuna" placeholder="Comuna" />
+        <input type="text" class="textbox" name="Correo_electronico" id="correoElectronico" placeholder="Correo Electrónico" />
+        <input type="text" class="textbox" name="Celular" id="celular" placeholder="Celular" />
+
+        <!-- Calendario para Fecha de Nacimiento -->
+        <input type="date" class="textbox" name="fecha_Nacimiento" id="fechaNacimiento" />
+      </div>
+
+      <div class="section">
+        <h2 style="margin-top: 20px;">Antecedentes Previsionales</h2>
         <div class="subCasoEmergencia">
-            <img src="{% static 'images/lineaRoja.png' %}">
+          <img src="{% static 'images/lineaRoja.png' %}" />
         </div>
-        <input type="text" class="textbox" placeholder="Nombre y Apellido">
-        <input type="text" class="textbox" placeholder="Celular">
-        <input type="text" class="textbox" placeholder="Parentesco">
-    </div>
-    <div class="section">
-        <h2>Hijos</h2>
-        <img src="Capa 11.png">
+        <input type="text" class="textbox" name="AFP" id="afp" placeholder="AFP" />
+        <input type="text" class="textbox" name="Salud" id="salud" placeholder="Salud" />
+        <input type="text" class="textbox" name="Otros" id="otros" placeholder="Otros" />
+      </div>
+
+      <div class="section">
+        <h2 style="margin-top: 20px;">Antecedentes Bancarios</h2>
+        <div class="subrayadoAntecedentes">
+          <img src="{% static 'images/lineaRoja.png' %}" />
+        </div>
+        <input type="text" class="textbox" name="tipo_cuenta" id="tipoCuenta" placeholder="Tipo de Cuenta" />
+        <input type="text" class="textbox" name="numero_cuenta" id="nDeCuenta" placeholder="Nº de Cuenta" />
+        <!-- Selector desplegable para Banco -->
+        <select class="textbox" name="Banco" id="banco">
+          <option value="">Selecciona Banco</option>
+          <option value="BCI">BCI</option>
+          <option value="Banco Estado">Banco Estado</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <h2 style="margin-top: 20px;">Contacto en Caso de Emergencia</h2>
+        <div class="subCasoEmergencia">
+          <img src="{% static 'images/lineaRoja.png' %}" />
+        </div>
+        <input type="text" class="textbox" name="Nombre_Apellido" id="nombreYapellido" placeholder="Nombre y Apellido" />
+        <input type="text" class="textbox" name="Celular_emergencia" id="celularEmergencia" placeholder="Celular" />
+        <input type="text" class="textbox" name="Parentesco" id="Parentesco" placeholder="Parentesco" />
+      </div>
+
+      <div class="section">
+        <h2 style="margin-top: 20px;">Hijos</h2>
+        <img src="{% static 'images/lineaRoja.png' %}" />
         <table id="TablaHijos">
-            <thead style="background-color: transparent;">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Rut</th>
-                    <th>Apellido Paterno</th>
-                    <th>Apellido Materno</th>
-                    <th>Nombres</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Sexo</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Hijo/a</td>
-                    <td><input type="text" class="textbox rut" placeholder="Rut"></td>
-                    <td><input type="text" class="textbox apellidoPaterno" placeholder="Apellido Paterno"></td>
-                    <td><input type="text" class="textbox" placeholder="Apellido Materno"></td>
-                    <td><input type="text" class="textbox" placeholder="Nombres"></td>
-                    <td><input type="date" class="textbox" placeholder="Fecha de Nacimiento"></td>
-                    <td>
-                        <select class="textbox" id="sexo">
-                            <option value="">Selecciona Sexo</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                        </select>
-                    </td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>Rut</th>
+              <th>Apellido Paterno</th>
+              <th>Apellido Materno</th>
+              <th>Nombres</th>
+              <th>Fecha de Nacimiento</th>
+              <th>Sexo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input type="text" class="textbox" name="rut_hijo" id="rut_hijo" placeholder="Rut" />
+              </td>
+              <td>
+                <input type="text" class="textbox" name="apellido_paterno_hijo" id="apellido_paterno_hijo" placeholder="Apellido Paterno" />
+              </td>
+              <td>
+                <input type="text" class="textbox" name="apellido_materno_hijo" id="apellido_materno_hijo" placeholder="Apellido Materno" />
+              </td>
+              <td>
+                <input type="text" class="textbox" name="nombres_hijo" id="nombres_hijo" placeholder="Nombres" />
+              </td>
+              <td>
+                <input type="date" class="textbox" name="fecha_nacimiento_hijo" id="fecha_nacimiento_hijo" placeholder="Fecha de Nacimiento" />
+              </td>
+              <td>
+                <select class="textbox" id="sexo_hijo" name="sexo_hijo">
+                  <option value="Selecciona Sexo">Selecciona Sexo</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                </select>
+              </td>
+              <td>
+                <button type="button" class="quitarHijoButton" onclick="quitarHijo(this)">Quitar</button>
+              </td>
+            </tr>
+          </tbody>
         </table>
-        <button id="agregarHijo">Agregar</button>
+        <button type="button" id="agregarHijoButton">Agregar</button>
+      </div>
 
-        <script>
-            document.getElementById('agregarHijo').addEventListener('click', function () {
-                const table = document.getElementById('TablaHijos').getElementsByTagName('tbody')[0];
-                const newRow = table.insertRow(table.rows.length - 1);
-
-                const cells = [];
-                for (let i = 0; i < 8; i++) { // Aumenta el valor de 8 para la nueva columna
-                    cells.push(newRow.insertCell(i));
-                    if (i === 0) {
-                        cells[i].innerHTML = 'Hijo/a';
-                    } else if (i === 7) { // Cambia el valor de 7 para la nueva columna
-                        const select = document.createElement('select');
-                        select.className = 'textbox';
-                        select.id = 'sexo';
-                        const options = ['Selecciona Sexo', 'Masculino', 'Femenino'];
-                        options.forEach((optionText) => {
-                            const option = document.createElement('option');
-                            option.value = optionText;
-                            option.text = optionText;
-                            select.appendChild(option);
-                        });
-                        cells[i].appendChild(select);
-                    } else {
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.className = `textbox ${i === 1 ? 'rut' : 'apellidoPaterno'}`;
-                        if (i === 1) {
-                            input.placeholder = 'Rut';
-                        } else if (i === 2) {
-                            input.placeholder = 'Apellido Paterno';
-                        } else if (i === 3) {
-                            input.placeholder = 'Apellido Materno';
-                        } else if (i === 4) {
-                            input.placeholder = 'Nombres';
-                        } else if (i === 5) {
-                            input.type = 'date';
-                            input.placeholder = 'Fecha de Nacimiento';
-                        }
-                        cells[i].appendChild(input);
-                    }
-                }
-            });
-        </script>
-    </div>
-
-    <div class="section">
-        <h2>Solicitud EPP</h2>
+      <div class="section">
+        <h2 style="margin-top: 20px;">Solicitud EPP</h2>
+        <img src="{% static 'images/lineaRoja.png' %}" />
         <table id="tablaElementos">
-            <thead style="background-color: transparent;">
-                <tr>
-                    <th>Talla Polera</th>
-                    <th>Talla Pantalon</th>
-                    <th>Calzado Seguridad</th>
-                    <th>Talla Overol</th>
-                    <th>Talla Traje de Agua</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <select class="textbox" id="Talla Polera">
-                        <option value="TallaPolera">Selecciona Talla</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="textbox" id="Talla Pantalon">
-                        <option value="TallaPantalon">Selecciona Talla</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        </select>
-                    </td> 
-                    <td><input type="number" class="textbox" placeholder="Calzado"></td>
-                    <td>
-                        <select class="textbox" id="Talla Overol">
-                        <option value="TallaOverol">Selecciona Talla</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="textbox" id="Talla Traje de Agua">
-                        <option value="TallaTraje">Selecciona Talla</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        </select>
-                    </td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>Talla Polera</th>
+              <th>Talla Pantalon</th>
+              <th>Calzado Seguridad</th>
+              <th>Talla Overol</th>
+              <th>Talla Traje de Agua</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select class="textbox" id="TallaPolera">
+                  <option value="TallaPolera">Selecciona Talla</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                </select>
+              </td>
+              <td>
+                <select class="textbox" id="TallaPantalon">
+                  <option value="TallaPantalon">Selecciona Talla</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" class="textbox" name="Numero_calzado" id="numeroCalzado" placeholder="Calzado" />
+              </td>
+              <td>
+                <select class="textbox" id="TallaOverol">
+                  <option value="TallaOverol">Selecciona Talla</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                </select>
+              </td>
+              <td>
+                <select class="textbox" id="TallaTrajeDeAgua">
+                  <option value="TallaTraje">Selecciona Talla</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
         </table>
-    </div>
+      </div>
 
-    <div class="section">
-        <h2>Documentación Adjuntada</h2>
-        <img src="{% static 'images/lineaRoja.png' %}">
-    </div>
+      <div class="section">
+        <h2 style="margin-top: 20px;">Documentación Adjuntada</h2>
+        <img src="{% static 'images/lineaRoja.png' %}" />
+      </div>
 
-    <div class="document-box">
-        <input type="file" id="file-input" accept=".pdf, .doc, .docx">
-        <label for="file-input" class="custom-file-upload">
-            Seleccionar documento
-        </label>
+      <div class="document-box">
+        <input type="file" style="margin-top: 20px;" id="file-input" accept=".pdf, .doc, .docx" />
+        <label for="file-input" class="custom-file-upload"><-----Seleccionar documento</label>
         <div id="file-name"></div>
         <ul id="document-list"></ul>
-    </div>
+      </div>
 
-    <script src="scriptdocumento.js"></script>
-
-    <h3></h3>
-    <button type="submit" id="GuardarFicha">Guardar Ficha</button>
-
-</form>
+      <button id="guardarFichaPersonalButton" class="btn btn-personalizado" style="background-color: #a30000; border-radius: 10px; margin: 5px;" type="submit">Guardar Ficha</button>
+      <button class="btn btn-secondary" type="button" onclick="goBack()" style="margin: 20px;">Volver</button>
+      <script>
+        function goBack() {
+          window.history.back()
+        }
+      </script>
+    </form>
+  </div>
 {% endblock %}
 
 {% block module_scripts %}
   <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'js/scriptDocumento.js' %}"></script>
   <script src="{% static 'js/scriptPersonal.js' %}"></script>
 {% endblock %}
