@@ -56,7 +56,7 @@ function agregarHijo() {
     quitarButton.type = 'button';
     quitarButton.className = 'quitarHijoButton';
     quitarButton.textContent = 'Quitar';
-    quitarButton.onclick = function() {
+    quitarButton.onclick = function () {
         quitarHijo(newRow);
     };
     quitarButtonCell.appendChild(quitarButton);
@@ -70,46 +70,64 @@ function quitarHijo(row) {
     console.log('Se quitó la fila con éxito');
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    var nuevaFichaPersonalURL = $('#fichaPersonalForm').data('url');
+// scriptPersonal.js
 
-    $('#fichaPersonalForm').submit(function (event) {
-
-        console.log("Enviando formulario con método POST");
-        event.preventDefault();
-
-        console.log("Formulario enviado. Realizando solicitud AJAX...");
-
-        var formData = new FormData(document.getElementById('fichaPersonalForm'));
-
-        $.ajax({
-            type: 'POST',
-            url: nuevaFichaPersonalURL,
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                console.log("Respuesta del servidor:", data);
-
-                if (data.redireccionar_a) {
-                    console.log("Redireccionando a:", data.redireccionar_a);
-                    window.location.href = data.redireccionar_a;
-                } else {
-                    console.error("La respuesta no contiene una URL de redirección.");
-                    console.error("Mensaje de error:", data.mensaje);
-
-                    if (data.errores_validacion && Object.keys(data.errores_validacion).length > 0) {
-                        Object.keys(data.errores_validacion).forEach(function (field) {
-                            const errorMessage = data.errores_validacion[field].join(', ');
-                            alert(`Error en el campo ${field}: ${errorMessage}`);
-                        });
-                    }
-                }
-            },
-            error: function (data) {
-                console.error("Error en la solicitud AJAX:", data);
-                console.log("Datos completos:", data);
-            }
-        });
+$(document).ready(function() {
+    $('#guardarFichaPersonalButton').on('click', function(event) {
+      event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+      
+      // Obtener datos del formulario
+      var formData = {
+        apellido_paterno: $('#apellidoPaterno').val(),
+        apellido_Materno: $('#apellidoMaterno').val(),
+        Nombres: $('#nombres').val(),
+        Rut: $('#rut').val(),
+        estado_Civil: $('#estadoCivil').val(),
+        Nacionalidad: $('#nacionalidad').val(),
+        Dirección: $('#direccion').val(),
+        Comuna: $('#comuna').val(),
+        Correo_electronico: $('#correoElectronico').val(),
+        Celular: $('#celular').val(),
+        fecha_Nacimiento: $('#fechaNacimiento').val(),
+        AFP: $('#afp').val(),
+        Salud: $('#salud').val(),
+        Otros: $('#otros').val(),
+        tipo_cuenta: $('#tipoCuenta').val(),
+        numero_cuenta: $('#nDeCuenta').val(),
+        Banco: $('#banco').val(),
+        Nombre_Apellido: $('#nombreYapellido').val(),
+        Celular_emergencia: $('#celularEmergencia').val(),
+        Parentesco: $('#Parentesco').val(),
+        rut_hijo: $('#rut_hijo').val(),
+        apellido_paterno_hijo: $('#apellido_paterno_hijo').val(),
+        apellido_materno_hijo: $('#apellido_materno_hijo').val(),
+        nombres_hijo: $('#nombres_hijo').val(),
+        fecha_nacimiento_hijo: $('#fecha_nacimiento_hijo').val(),
+        sexo_hijo: $('#sexo_hijo').val(),
+        TallaPolera: $('#TallaPolera').val(),
+        TallaPantalon: $('#TallaPantalon').val(),
+        numeroCalzado: $('#numeroCalzado').val(),
+        TallaOverol: $('#TallaOverol').val(),
+        TallaTrajeDeAgua: $('#TallaTrajeDeAgua').val(),
+        // Agrega aquí el resto de los campos según sea necesario
+      };
+  
+      // Realizar solicitud AJAX
+      $.ajax({
+        type: 'POST',
+        url: $('#fichaPersonalForm').attr('data-url'), // Obtener la URL del formulario
+        data: JSON.stringify(formData),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(response) {
+          // Manejar la respuesta del servidor
+          console.log(response);
+        },
+        error: function(error) {
+          // Manejar errores de la solicitud AJAX
+          console.error('Error en la solicitud AJAX:', error);
+        }
+      });
     });
-});
+  });
+  

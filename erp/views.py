@@ -11,6 +11,8 @@ from django.views.decorators.http import require_POST
 from django.core.serializers import serialize
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorDict
+from django.views.decorators.csrf import csrf_exempt
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -253,12 +255,20 @@ def obtener_color_para_estadoPersonal(estado):
     # Devuelve el color asociado al estado, o blanco por defecto
     return colores_por_estadoPersonal.get(estado, '#FF0000')
 
+@csrf_exempt
 @login_required
 def nueva_fichaPersonal(request):
     errors = {}
 
     if request.method == 'POST':
-        form = FichaPersonalForm(request.POST)
+        try:
+            body_content = request.body.decode('utf-8')
+            data = json.loads(body_content)
+            form = FichaPersonalForm(data)
+        except json.JSONDecodeError as e:
+            errors = {'error': f'Error al decodificar JSON: {e}'}
+            print(f'Error al decodificar JSON: {e}')
+            return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
 
         if form.is_valid():
             ficha = form.save(commit=False)
@@ -270,13 +280,13 @@ def nueva_fichaPersonal(request):
 
             messages.success(request, 'Ficha de Personal guardada exitosamente.')
 
-            # Devuelve una respuesta JSON con la URL a la que se redirigirá
             return JsonResponse({'redireccionar_a': reverse('erp:gestor-personal')})
         else:
-            errors = form.errors.as_json()
+            # Devuelve una respuesta JSON con los errores específicos del formulario
+            print(f'Errores de validación del formulario: {form.errors}')
+            return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': form.errors}, status=400)
 
-    # Devuelve una respuesta JSON con los errores si el formulario no es válido
-    return JsonResponse({'mensaje': 'Error en el formulario', 'errores_validacion': errors}, status=400)
+    return render(request, 'html/fichaPersonal.html', {'errors': errors})
 
 #----------Inventario
 @login_required
